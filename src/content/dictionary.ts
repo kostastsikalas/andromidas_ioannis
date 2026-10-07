@@ -1,0 +1,213 @@
+import type { Locale } from "./site";
+
+const el = {
+  nav: {
+    home: "Αρχική",
+    doctor: "Ο Ιατρός",
+    services: "Υπηρεσίες",
+    articles: "Άρθρα",
+    contact: "Επικοινωνία",
+  },
+  cta: {
+    call: "Κλήση",
+    callNow: "Καλέστε τώρα",
+    directions: "Οδηγίες",
+    appointment: "Ραντεβού",
+    bookAppointment: "Κλείστε ραντεβού",
+    learnMore: "Περισσότερα",
+    allServices: "Όλες οι υπηρεσίες",
+    allArticles: "Όλα τα άρθρα",
+    aboutDoctor: "Γνωρίστε τον ιατρό",
+    readArticle: "Διαβάστε",
+  },
+  menu: { open: "Άνοιγμα μενού", close: "Κλείσιμο μενού" },
+  language: { label: "Γλώσσα", switchTo: "English" },
+  hours: {
+    title: "Ωράριο ιατρείου",
+    byAppointment: "Κατόπιν ραντεβού",
+    closed: "Κλειστά",
+    openNow: "Ανοιχτά τώρα",
+    closedNow: "Κλειστά τώρα",
+    today: "Σήμερα",
+    emergencies: "Για επείγοντα και ραντεβού καλέστε στο",
+  },
+  home: {
+    eyebrow: "Ωτορινολαρυγγολογικό ιατρείο · Χερσόνησος Κρήτης",
+    heroText:
+      "Σύγχρονη διάγνωση και θεραπεία παθήσεων αυτιών, μύτης και λαιμού για παιδιά και ενήλικες, στον Λιμένα Χερσονήσου.",
+    highlights: [
+      { title: "Ενηλίκων & Παίδων", text: "Εξειδίκευση στο Νοσοκομείο Παίδων «Π&Α Κυριακού»" },
+      { title: "Σύγχρονος εξοπλισμός", text: "Ενδοσκόπηση, ωτομικροσκόπηση, ακοομετρία" },
+      { title: "Επισκέψεις κατ’ οίκον", text: "Με φορητό εξοπλισμό για όσους δεν μετακινούνται" },
+    ],
+    servicesTitle: "Υπηρεσίες",
+    servicesText: "Διάγνωση και θεραπεία για όλο το φάσμα της Ωτορινολαρυγγολογίας.",
+    aboutTitle: "Καλώς ήρθατε",
+    aboutText: [
+      "Το ιατρείο βρίσκεται στην οδό Δασκαλογιάννη 4 στον Λιμένα Χερσονήσου και είναι εξοπλισμένο με σύγχρονα ιατρικά μηχανήματα για τη διάγνωση και θεραπεία των παθήσεων των ώτων, της ρινός και του λάρυγγα, καθώς και των παθήσεων κεφαλής και τραχήλου σε παιδιά και ενήλικες.",
+      "Ασθενείς από τη Χερσόνησο, τα Μάλια, τις Γούβες και τις γειτονικές περιοχές επισκέπτονται το ιατρείο για εξειδικευμένη Ω.Ρ.Λ. εξέταση.",
+    ],
+    officeTitle: "Το ιατρείο",
+    articlesTitle: "Ενημερωτικά άρθρα",
+    areasTitle: "Περιοχές εξυπηρέτησης",
+    visitTitle: "Επισκεφθείτε μας",
+  },
+  services: {
+    title: "Υπηρεσίες",
+    intro: "Στο ιατρείο παρέχονται οι παρακάτω Ω.Ρ.Λ. υπηρεσίες.",
+    conditions: "Συχνές παθήσεις",
+    procedures: "Εξετάσεις & πράξεις στο ιατρείο",
+    other: "Άλλες υπηρεσίες",
+  },
+  doctor: {
+    title: "Ο Ιατρός",
+    education: "Σπουδές & εκπαίδευση",
+    memberships: "Μέλος του",
+  },
+  articles: {
+    title: "Άρθρα",
+    intro: "Απλά λόγια για συχνά ζητήματα Ωτορινολαρυγγολογίας.",
+    disclaimer:
+      "Το κείμενο αυτό έχει ως σκοπό να ενημερώσει γενικά για ιατρικά θέματα και δεν υποκαθιστά σε καμία περίπτωση την εξέταση από τον γιατρό σας.",
+    greekOnly: "",
+    photoCredit: "Φωτογραφία",
+  },
+  contact: {
+    title: "Επικοινωνία",
+    intro: "Καλέστε μας ή στείλτε ένα αίτημα ραντεβού και θα σας καλέσουμε εμείς.",
+    address: "Διεύθυνση",
+    phone: "Τηλέφωνο",
+    mobile: "Κινητό",
+    office: "Ιατρείο",
+    email: "Email",
+    map: "Χάρτης",
+  },
+  form: {
+    title: "Αίτημα ραντεβού",
+    name: "Ονοματεπώνυμο",
+    phone: "Τηλέφωνο",
+    email: "Email (προαιρετικό)",
+    date: "Προτιμώμενη ημέρα (προαιρετικό)",
+    message: "Σύντομη περιγραφή του προβλήματος",
+    submit: "Αποστολή αιτήματος",
+    sending: "Αποστολή…",
+    success: "Ευχαριστούμε! Λάβαμε το αίτημά σας και θα σας καλέσουμε σύντομα για επιβεβαίωση.",
+    error: "Κάτι πήγε στραβά. Παρακαλούμε καλέστε μας στο",
+    note: "Το αίτημα δεν αποτελεί επιβεβαιωμένο ραντεβού. Για επείγοντα καλέστε απευθείας.",
+    consent: "Συμφωνώ με την επεξεργασία των στοιχείων μου για την εξυπηρέτηση του αιτήματος.",
+  },
+  footer: {
+    rights: "Με την επιφύλαξη παντός δικαιώματος.",
+    terms: "Όροι χρήσης",
+  },
+  notFound: { title: "Η σελίδα δεν βρέθηκε", back: "Επιστροφή στην αρχική" },
+};
+
+export type Dictionary = typeof el;
+
+const en: Dictionary = {
+  nav: {
+    home: "Home",
+    doctor: "The Doctor",
+    services: "Services",
+    articles: "Articles",
+    contact: "Contact",
+  },
+  cta: {
+    call: "Call",
+    callNow: "Call now",
+    directions: "Directions",
+    appointment: "Appointment",
+    bookAppointment: "Book an appointment",
+    learnMore: "Learn more",
+    allServices: "All services",
+    allArticles: "All articles",
+    aboutDoctor: "Meet the doctor",
+    readArticle: "Read",
+  },
+  menu: { open: "Open menu", close: "Close menu" },
+  language: { label: "Language", switchTo: "Ελληνικά" },
+  hours: {
+    title: "Office hours",
+    byAppointment: "By appointment",
+    closed: "Closed",
+    openNow: "Open now",
+    closedNow: "Closed now",
+    today: "Today",
+    emergencies: "For emergencies and appointments call",
+  },
+  home: {
+    eyebrow: "Ear, Nose & Throat clinic · Hersonissos, Crete",
+    heroText:
+      "Modern diagnosis and treatment of ear, nose and throat conditions for children and adults, in Limenas Hersonissos.",
+    highlights: [
+      { title: "Adults & children", text: "Trained at the “P&A Kyriakou” Children’s Hospital" },
+      { title: "Modern equipment", text: "Endoscopy, ear microscopy, audiometry" },
+      { title: "Home visits", text: "With portable equipment for patients who can’t travel" },
+    ],
+    servicesTitle: "Services",
+    servicesText: "Diagnosis and treatment across the full range of Otolaryngology.",
+    aboutTitle: "Welcome",
+    aboutText: [
+      "The clinic is located at 4 Daskalogianni Str. in Limenas Hersonissos and is equipped with modern medical devices for the diagnosis and treatment of ear, nose and throat conditions, as well as head and neck conditions, in children and adults.",
+      "Patients from Hersonissos, Malia, Gouves and the surrounding areas — including visitors on holiday — visit the clinic for a specialist ENT consultation.",
+    ],
+    officeTitle: "The clinic",
+    articlesTitle: "Patient information",
+    areasTitle: "Areas we serve",
+    visitTitle: "Visit us",
+  },
+  services: {
+    title: "Services",
+    intro: "The following ENT services are provided at the clinic.",
+    conditions: "Common conditions",
+    procedures: "Examinations & procedures in the clinic",
+    other: "Other services",
+  },
+  doctor: {
+    title: "The Doctor",
+    education: "Education & training",
+    memberships: "Member of",
+  },
+  articles: {
+    title: "Articles",
+    intro: "Plain-language information on common ENT topics.",
+    disclaimer:
+      "This text is intended for general information on medical topics and in no way replaces an examination by your doctor.",
+    greekOnly: "These articles are currently available in Greek only.",
+    photoCredit: "Photo",
+  },
+  contact: {
+    title: "Contact",
+    intro: "Call us, or send an appointment request and we will call you back.",
+    address: "Address",
+    phone: "Phone",
+    mobile: "Mobile",
+    office: "Office",
+    email: "Email",
+    map: "Map",
+  },
+  form: {
+    title: "Appointment request",
+    name: "Full name",
+    phone: "Phone",
+    email: "Email (optional)",
+    date: "Preferred day (optional)",
+    message: "Short description of the problem",
+    submit: "Send request",
+    sending: "Sending…",
+    success: "Thank you! We received your request and will call you shortly to confirm.",
+    error: "Something went wrong. Please call us at",
+    note: "A request is not a confirmed appointment. For emergencies please call directly.",
+    consent: "I agree to the processing of my details in order to handle this request.",
+  },
+  footer: {
+    rights: "All rights reserved.",
+    terms: "Terms of use",
+  },
+  notFound: { title: "Page not found", back: "Back to home" },
+};
+
+const dictionaries: Record<Locale, Dictionary> = { el, en };
+
+export const getDictionary = (locale: Locale) => dictionaries[locale];
