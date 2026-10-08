@@ -10,7 +10,7 @@ import { LogoMark } from "./Logo";
 export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
   return (
     <footer className="mt-auto bg-brand-900 text-brand-100">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.3fr_1fr_1fr] md:py-16">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1.3fr_1fr_1fr] md:gap-10 md:py-16">
         <div>
           <div className="flex items-center gap-3">
             <LogoMark className="h-11 w-11" />
@@ -43,7 +43,7 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
           </ul>
         </div>
 
-        <div>
+        <div className="hidden md:block">
           <p className="font-display font-semibold text-white">{dict.nav.services}</p>
           <ul className="mt-4 space-y-2 text-[15px]">
             {services.map((s) => (
@@ -55,8 +55,8 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
         </div>
 
         <div>
-          <p className="font-display font-semibold text-white">Menu</p>
-          <ul className="mt-4 space-y-2 text-[15px]">
+          <p className="hidden font-display font-semibold text-white md:block">Menu</p>
+          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[15px] md:mt-4 md:block md:space-y-2">
             {navItems(lang, dict).map((i) => (
               <li key={i.href}>
                 <Link href={i.href} className="hover:text-white">{i.label}</Link>

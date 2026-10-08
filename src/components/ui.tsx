@@ -71,22 +71,3 @@ export function ButtonLink({
   return <Link {...props} href={href} className={cls} />;
 }
 
-/** Placeholder shown during client navigation while a page's content streams in. */
-export function PageSkeleton() {
-  return (
-    <div aria-hidden="true" className="animate-pulse">
-      <div className="border-b border-line bg-brand-100/40">
-        <Container className="py-10 sm:py-14">
-          <div className="h-4 w-40 rounded bg-brand-100" />
-          <div className="mt-4 h-10 w-3/4 max-w-lg rounded-lg bg-brand-100" />
-          <div className="mt-4 h-5 w-2/3 max-w-md rounded bg-brand-100" />
-        </Container>
-      </div>
-      <Container className="space-y-3 py-12">
-        <div className="h-4 w-full max-w-2xl rounded bg-line" />
-        <div className="h-4 w-11/12 max-w-2xl rounded bg-line" />
-        <div className="h-4 w-4/5 max-w-2xl rounded bg-line" />
-      </Container>
-    </div>
-  );
-}

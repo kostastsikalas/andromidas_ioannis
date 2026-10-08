@@ -32,3 +32,7 @@ logged in development and the API returns 503 in production.
 ## Deploy
 
 Vercel (recommended) or any Node host. Set the SMTP env vars, then point the domain's DNS to the host.
+
+## Handover
+
+Step-by-step delivery guide (Greek): [`docs/PARADOSI.md`](docs/PARADOSI.md) — Vercel setup, SMTP, domain/DNS, post-launch checklist.

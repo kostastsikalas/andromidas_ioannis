@@ -2,13 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HoursCard } from "@/components/HoursCard";
-import { ArrowRightIcon, CalendarIcon, CheckIcon, MapPinIcon, PhoneIcon, ServiceGlyph } from "@/components/Icons";
+import { ArrowRightIcon, CalendarIcon, MapPinIcon, PhoneIcon, ServiceGlyph } from "@/components/Icons";
+import { OpenBadge } from "@/components/OpenStatus";
 import { ButtonLink, Container, SectionTitle } from "@/components/ui";
 import { articles } from "@/content/articles";
 import { getDictionary } from "@/content/dictionary";
 import { services } from "@/content/services";
 import { hasLocale, mapsDirectionsUrl, mapsEmbedUrl, site } from "@/content/site";
 import { paths } from "@/lib/paths";
+
+const highlightIcons = ["child", "ear", "home"] as const;
 
 const gallery = [
   { src: "/images/office.jpg", w: 1800, h: 1198, alt: { el: "Εξεταστήριο ιατρείου", en: "Examination room" } },
@@ -27,16 +30,45 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-b from-brand-100/60 via-brand-50/30 to-transparent">
-        <Container className="grid items-center gap-8 pb-12 pt-8 sm:pt-12 md:grid-cols-[1.15fr_1fr] md:gap-12 md:pb-20 md:pt-16">
-          <div>
-            <p className="text-[13px] font-semibold uppercase tracking-wider text-brand-500">{t.eyebrow}</p>
-            <h1 className="mt-3 font-display text-[2.1rem] font-extrabold leading-[1.1] tracking-tight text-brand-900 text-balance sm:text-5xl md:text-[3.4rem]">
-              {site.name[lang]}
-            </h1>
-            <p className="mt-2 font-display text-lg font-semibold text-brand-600 sm:text-xl">{site.title[lang]}</p>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted text-pretty">{t.heroText}</p>
+        <Container className="grid items-center gap-8 pb-10 pt-4 sm:pt-12 md:grid-cols-[1.15fr_1fr] md:gap-12 md:pb-20 md:pt-16">
+          <div className="min-w-0">
+            {/* Phones: photo card with the name on top of it */}
+            <div className="relative -mx-1 overflow-hidden rounded-[1.75rem] bg-brand-800 shadow-xl shadow-brand-900/20 ring-1 ring-brand-900/5 md:hidden">
+              <div className="relative aspect-[1/1] max-h-[22rem] w-full">
+                <Image
+                  src="/images/doctor.jpg"
+                  alt={site.name[lang]}
+                  fill
+                  priority
+                  sizes="100vw"
+                  className="object-cover object-[62%_38%]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-900/95 from-10% via-brand-900/45 via-40% to-transparent to-65%" />
+                <div className="absolute left-3 top-3 rounded-full bg-white/90 p-0.5 shadow-sm backdrop-blur empty:hidden">
+                  <OpenBadge openLabel={dict.hours.openNow} closedLabel={dict.hours.closedNow} />
+                </div>
+                <div className="absolute inset-x-0 bottom-0 p-5">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-brand-200">
+                    {site.shortTitle[lang]}
+                  </p>
+                  <h1 className="mt-1 font-display text-[1.85rem] font-extrabold leading-[1.1] tracking-tight text-white">
+                    {site.name[lang]}
+                  </h1>
+                  <p className="mt-1 text-[14px] font-medium leading-snug text-brand-100">{site.title[lang]}</p>
+                </div>
+              </div>
+            </div>
 
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <div className="hidden md:block">
+              <p className="text-[13px] font-semibold uppercase tracking-wider text-brand-500">{t.eyebrow}</p>
+              <h1 className="mt-3 font-display text-5xl font-extrabold leading-[1.1] tracking-tight text-brand-900 text-balance md:text-[3.4rem]">
+                {site.name[lang]}
+              </h1>
+              <p className="mt-2 font-display text-xl font-semibold text-brand-600">{site.title[lang]}</p>
+            </div>
+            <p className="mt-5 max-w-xl px-1 text-[16px] leading-relaxed text-muted text-pretty sm:px-0 sm:text-lg">{t.heroText}</p>
+
+            <div className="mt-5 flex flex-col gap-2.5 sm:mt-6 sm:flex-row sm:gap-3">
               <ButtonLink href={site.phones.mobile.href} className="py-3.5 text-base">
                 <PhoneIcon className="h-5 w-5" />
                 {dict.cta.callNow} · {site.phones.mobile.display}
@@ -47,27 +79,30 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
               </ButtonLink>
             </div>
 
-            <ul className="mt-8 grid gap-3 sm:grid-cols-3">
-              {t.highlights.map((h) => (
-                <li key={h.title} className="flex gap-3 sm:block">
-                  <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-500 sm:mb-2" />
-                  <div>
-                    <p className="font-semibold text-ink">{h.title}</p>
-                    <p className="text-sm text-muted">{h.text}</p>
-                  </div>
+            <ul className="mt-6 grid grid-cols-3 gap-2 sm:mt-8 sm:gap-6">
+              {t.highlights.map((h, i) => (
+                <li
+                  key={h.title}
+                  className="flex flex-col items-center rounded-2xl border border-white bg-white/70 px-2 py-3.5 text-center shadow-sm sm:items-start sm:border-0 sm:bg-transparent sm:p-0 sm:text-left sm:shadow-none"
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 text-brand-600 ring-1 ring-brand-100 sm:mb-2">
+                    <ServiceGlyph icon={highlightIcons[i]} className="h-5 w-5" />
+                  </span>
+                  <p className="mt-2 text-[13px] font-semibold leading-tight text-ink sm:mt-0 sm:text-base">{h.title}</p>
+                  <p className="hidden text-sm text-muted sm:block">{h.text}</p>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="relative">
-            <div className="relative mx-auto aspect-[4/3] w-full overflow-hidden sm:aspect-[4/5] sm:max-w-sm rounded-[2rem] bg-brand-100 shadow-xl shadow-brand-900/10 md:max-h-none md:max-w-none">
+          <div className="relative hidden md:block">
+            <div className="relative mx-auto aspect-[4/5] w-full overflow-hidden rounded-[2rem] bg-brand-100 shadow-xl shadow-brand-900/10 md:max-h-none md:max-w-none">
               <Image
                 src="/images/doctor.jpg"
                 alt={site.name[lang]}
                 fill
                 priority
-                sizes="(min-width: 768px) 45vw, 90vw"
+                sizes="45vw"
                 className="object-cover object-[50%_25%]"
               />
             </div>
@@ -133,7 +168,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
             </ButtonLink>
 
             <h3 className="mt-12 font-display text-lg font-bold text-brand-900">{t.officeTitle}</h3>
-            <div className="-mx-4 mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0">
+            <div className="-mx-4 mt-4 flex snap-x snap-mandatory scroll-px-4 sm:scroll-px-0 gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0">
               {gallery.map((g) => (
                 <div key={g.src} className="relative aspect-[4/3] w-64 shrink-0 snap-start overflow-hidden rounded-2xl bg-brand-50 sm:w-auto">
                   <Image src={g.src} alt={g.alt[lang]} fill sizes="(min-width: 640px) 16vw, 256px" className="object-cover" />
@@ -157,7 +192,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
               </Link>
             }
           />
-          <ul className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
+          <ul className="-mx-4 flex snap-x snap-mandatory scroll-px-4 sm:scroll-px-0 gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
             {articles.slice(0, 3).map((a) => (
               <li key={a.slug} className="w-72 shrink-0 snap-start md:w-auto">
                 <Link href={paths.article(lang, a.slug)} className="group block h-full overflow-hidden rounded-2xl border border-line bg-white transition hover:shadow-lg hover:shadow-brand-900/5">
@@ -186,7 +221,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
                 {site.address.city[lang]} {site.address.postalCode}, {site.address.region[lang]}
               </p>
             </address>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-5 flex flex-col gap-2.5 sm:mt-6 sm:flex-row sm:gap-3">
               <ButtonLink href={mapsDirectionsUrl} external variant="secondary">
                 <MapPinIcon className="h-5 w-5" /> {dict.cta.directions}
               </ButtonLink>

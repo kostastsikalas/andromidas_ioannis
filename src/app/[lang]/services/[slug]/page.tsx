@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { ArrowRightIcon, CalendarIcon, CheckIcon, PhoneIcon, ServiceGlyph } from "@/components/Icons";
-import { ButtonLink, Container, PageHeader, PageSkeleton } from "@/components/ui";
+import { ButtonLink, Container, PageHeader } from "@/components/ui";
 import { getDictionary } from "@/content/dictionary";
 import { getService, services } from "@/content/services";
 import { hasLocale, locales, site } from "@/content/site";
@@ -25,15 +24,10 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/services/[
   };
 }
 
-export default function ServicePage({ params }: PageProps<"/[lang]/services/[slug]">) {
-  return (
-    <Suspense fallback={<PageSkeleton />}>
-      <ServicePageContent params={params} />
-    </Suspense>
-  );
-}
+// Every slug is prerendered, so serve the full page instead of a streamed skeleton (avoids layout shift).
+export const instant = false;
 
-async function ServicePageContent({ params }: Pick<PageProps<"/[lang]/services/[slug]">, "params">) {
+export default async function ServicePage({ params }: PageProps<"/[lang]/services/[slug]">) {
   const { lang, slug } = await params;
   const service = getService(slug);
   if (!hasLocale(lang) || !service) notFound();

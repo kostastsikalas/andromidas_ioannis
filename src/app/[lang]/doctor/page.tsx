@@ -22,17 +22,19 @@ export default async function DoctorPage({ params }: PageProps<"/[lang]/doctor">
   return (
     <>
       <PageHeader eyebrow={site.title[lang]} title={site.name[lang]} />
-      <Container className="grid gap-10 py-12 sm:py-16 md:grid-cols-[minmax(0,22rem)_1fr] md:gap-14">
+      <Container className="grid gap-8 py-8 sm:gap-10 sm:py-16 md:grid-cols-[minmax(0,22rem)_1fr] md:gap-14">
         <div className="md:sticky md:top-28 md:self-start">
-          <div className="relative mx-auto aspect-[3/4] w-full max-w-xs overflow-hidden rounded-3xl bg-brand-100 shadow-lg md:max-w-none">
+          <div className="relative mx-auto aspect-[4/3] w-full overflow-hidden rounded-3xl sm:aspect-[3/4] sm:max-w-xs bg-brand-100 shadow-lg md:max-w-none">
             <Image src="/images/doctor.jpg" alt={site.name[lang]} fill priority sizes="(min-width: 768px) 22rem, 80vw" className="object-cover object-[50%_30%]" />
           </div>
+          <div className="hidden md:block">
           <ButtonLink href={site.phones.mobile.href} className="mt-6 w-full">
             <PhoneIcon className="h-5 w-5" /> {site.phones.mobile.display}
           </ButtonLink>
           <ButtonLink href={paths.appointment(lang)} variant="ghost" className="mt-3 w-full">
             {dict.cta.bookAppointment}
           </ButtonLink>
+          </div>
         </div>
 
         <div>

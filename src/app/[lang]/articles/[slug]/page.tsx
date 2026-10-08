@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { PhoneIcon } from "@/components/Icons";
-import { ButtonLink, Container, PageHeader, PageSkeleton } from "@/components/ui";
+import { ButtonLink, Container, PageHeader } from "@/components/ui";
 import { articles, getArticle } from "@/content/articles";
 import { getDictionary } from "@/content/dictionary";
 import { hasLocale, locales, site } from "@/content/site";
@@ -27,15 +26,10 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/articles/[
   };
 }
 
-export default function ArticlePage({ params }: PageProps<"/[lang]/articles/[slug]">) {
-  return (
-    <Suspense fallback={<PageSkeleton />}>
-      <ArticlePageContent params={params} />
-    </Suspense>
-  );
-}
+// Every slug is prerendered, so serve the full page instead of a streamed skeleton (avoids layout shift).
+export const instant = false;
 
-async function ArticlePageContent({ params }: Pick<PageProps<"/[lang]/articles/[slug]">, "params">) {
+export default async function ArticlePage({ params }: PageProps<"/[lang]/articles/[slug]">) {
   const { lang, slug } = await params;
   const article = getArticle(slug);
   if (!hasLocale(lang) || !article) notFound();

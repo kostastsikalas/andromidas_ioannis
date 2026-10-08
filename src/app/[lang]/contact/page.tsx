@@ -36,26 +36,27 @@ export default async function ContactPage({ params }: PageProps<"/[lang]/contact
       value: site.phones.office.display,
       href: site.phones.office.href,
     },
-    { icon: MailIcon, label: t.email, value: site.email, href: `mailto:${site.email}` },
+    { icon: MailIcon, label: t.email, value: site.email, href: `mailto:${site.email}`, wide: true },
     {
       icon: MapPinIcon,
       label: t.address,
       value: `${site.address.street[lang]}, ${site.address.city[lang]} ${site.address.postalCode}`,
       href: mapsDirectionsUrl,
+      wide: true,
     },
   ];
 
   return (
     <>
       <PageHeader title={t.title} intro={t.intro} />
-      <Container className="py-10 sm:py-14">
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <Container className="py-8 sm:py-14">
+        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {cards.map(({ icon: Icon, ...c }) => (
-            <li key={c.label}>
+            <li key={c.label} className={c.wide ? "col-span-2 sm:col-span-1" : ""}>
               <a
                 href={c.href}
                 {...(c.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                className="flex h-full items-start gap-4 rounded-2xl border border-line bg-white p-5 transition hover:border-brand-200 hover:shadow"
+                className="flex h-full flex-col items-start gap-3 rounded-2xl border border-line bg-white p-4 transition sm:flex-row sm:gap-4 sm:p-5 hover:border-brand-200 hover:shadow"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                   <Icon className="h-5 w-5" />
