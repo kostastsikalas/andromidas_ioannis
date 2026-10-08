@@ -17,12 +17,24 @@ npm run build && npm start
 | Phones, email, address, hours, service areas | `src/content/site.ts` |
 | UI texts (EL/EN) | `src/content/dictionary.ts` |
 | Services | `src/content/services.ts` |
-| Articles (Greek) | `src/content/articles.ts` |
+| Articles (edited from `/admin`) | `src/content/articles.json` |
 | Doctor bio | `src/content/doctor.ts` |
 | Terms of use | `src/content/terms.ts` |
 | Images | `public/images/` |
 | Appointment request API (Node, nodemailer) | `src/app/api/appointment/route.ts` |
 | Language redirect + old WordPress `?page_id=` redirects | `src/proxy.ts` |
+
+## Admin panel (`/admin`)
+
+The doctor logs in with `ADMIN_PASSWORD` to add, edit or delete articles and photos.
+On Vercel each save is a commit to this repo through the GitHub API (`GITHUB_TOKEN`), which triggers a redeploy.
+Locally (`npm run dev`) changes are written straight to `src/content/articles.json` and `public/images/articles/`.
+UI: `src/components/admin/AdminApp.tsx` · API: `src/app/api/admin/*` · storage: `src/lib/article-store.ts`.
+
+## Static version
+
+`../web-static/` is the same site exported to plain HTML + PHP for Apache hosting such as Papaki.
+Code is identical except `src/lib/runtime-config.ts`, `next.config.ts`, and the PHP files in `public/api/`.
 
 ## Appointment emails
 

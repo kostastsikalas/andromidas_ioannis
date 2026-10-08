@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import type { Dictionary } from "@/content/dictionary";
 import { site, type Locale } from "@/content/site";
+import { runtimeConfig } from "@/lib/runtime-config";
 import { CheckIcon } from "./Icons";
 
 type Status = "idle" | "sending" | "success" | "error";
@@ -18,7 +19,7 @@ export function AppointmentForm({ lang, t }: { lang: Locale; t: Dictionary["form
     const form = e.currentTarget;
     setStatus("sending");
     try {
-      const res = await fetch("/api/appointment", {
+      const res = await fetch(runtimeConfig.formEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...Object.fromEntries(new FormData(form)), lang }),

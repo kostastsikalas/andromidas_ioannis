@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArticleCards } from "@/components/ArticleCards";
 import { HoursCard } from "@/components/HoursCard";
 import { ArrowRightIcon, CalendarIcon, MapPinIcon, PhoneIcon, ServiceGlyph } from "@/components/Icons";
 import { OpenBadge } from "@/components/OpenStatus";
@@ -192,21 +193,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
               </Link>
             }
           />
-          <ul className="-mx-4 flex snap-x snap-mandatory scroll-px-4 sm:scroll-px-0 gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
-            {articles.slice(0, 3).map((a) => (
-              <li key={a.slug} className="w-72 shrink-0 snap-start md:w-auto">
-                <Link href={paths.article(lang, a.slug)} className="group block h-full overflow-hidden rounded-2xl border border-line bg-white transition hover:shadow-lg hover:shadow-brand-900/5">
-                  <div className="relative aspect-[16/10] bg-brand-50">
-                    <Image src={a.image} alt="" fill sizes="(min-width: 768px) 30vw, 288px" className="object-cover transition duration-500 group-hover:scale-[1.03]" />
-                  </div>
-                  <div className="p-5">
-                    <p className="font-display font-bold text-brand-900">{a.title[lang]}</p>
-                    {lang === "el" && <p className="mt-1.5 text-sm text-muted">{a.excerpt}</p>}
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <ArticleCards lang={lang} initial={articles} variant="home" />
         </Container>
       </section>
 

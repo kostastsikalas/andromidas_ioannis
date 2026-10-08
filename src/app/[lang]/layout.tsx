@@ -57,7 +57,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
 
   return (
     <html lang={lang} className={`${inter.variable} ${commissioner.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col font-sans">
+      <body className="has-action-bar flex min-h-full flex-col font-sans">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:shadow"

@@ -76,5 +76,5 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   // Skip Next internals, the API, static images and metadata files.
-  matcher: ["/((?!_next|api|images|favicon.ico|icon.png|apple-icon.png|robots.txt|sitemap.xml).*)"],
+  matcher: ["/((?!_next|api|admin|images|favicon.ico|icon.png|apple-icon.png|robots.txt|sitemap.xml).*)"],
 };

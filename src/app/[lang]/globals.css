@@ -52,7 +52,7 @@ body {
 
 /* Leave room for the fixed mobile action bar */
 @media (max-width: 767px) {
-  body {
+  body.has-action-bar {
     padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
   }
 }
