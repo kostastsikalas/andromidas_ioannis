@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRightIcon, CalendarIcon, CheckIcon, PhoneIcon, ServiceGlyph } from "@/components/Icons";
+import { PhoneButton } from "@/components/Clinic";
 import { ButtonLink, Container, PageHeader } from "@/components/ui";
 import { getDictionary } from "@/content/dictionary";
 import { getService, services } from "@/content/services";
@@ -98,9 +99,9 @@ export default async function ServicePage({ params }: PageProps<"/[lang]/service
           <div className="rounded-3xl bg-brand-800 p-6 text-white">
             <p className="font-display text-lg font-bold">{dict.cta.bookAppointment}</p>
             <p className="mt-1 text-sm text-brand-200">{dict.hours.byAppointment}</p>
-            <ButtonLink href={site.phones.mobile.href} className="mt-5 w-full">
-              <PhoneIcon className="h-5 w-5" /> {site.phones.mobile.display}
-            </ButtonLink>
+            <PhoneButton className="mt-5 w-full">
+              <PhoneIcon className="h-5 w-5" />{" "}
+            </PhoneButton>
             <ButtonLink href={paths.appointment(lang)} variant="ghost" className="mt-3 w-full">
               <CalendarIcon className="h-5 w-5" /> {dict.form.title}
             </ButtonLink>

@@ -2,8 +2,9 @@
 
 import { useState, type FormEvent } from "react";
 import type { Dictionary } from "@/content/dictionary";
-import { site, type Locale } from "@/content/site";
+import type { Locale } from "@/content/site";
 import { runtimeConfig } from "@/lib/runtime-config";
+import { PhoneLink } from "./Clinic";
 import { CheckIcon } from "./Icons";
 
 type Status = "idle" | "sending" | "success" | "error";
@@ -90,9 +91,7 @@ export function AppointmentForm({ lang, t }: { lang: Locale; t: Dictionary["form
       {status === "error" && (
         <p role="alert" className="rounded-xl bg-accent-500/10 p-4 text-sm text-accent-600">
           {t.error}{" "}
-          <a href={site.phones.mobile.href} className="font-bold underline">
-            {site.phones.mobile.display}
-          </a>
+          <PhoneLink className="font-bold underline" />
         </p>
       )}
 

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import type { Dictionary } from "@/content/dictionary";
-import { site, type Locale } from "@/content/site";
+import type { Locale } from "@/content/site";
 import { paths } from "@/lib/paths";
+import { PhoneLink } from "./Clinic";
 import { PhoneIcon } from "./Icons";
 import { LanguageSwitch, LanguageSwitchFallback } from "./LanguageSwitch";
 import { Logo } from "./Logo";
@@ -49,13 +50,9 @@ export function Header({ lang, dict }: { lang: Locale; dict: Dictionary }) {
               <LanguageSwitch lang={lang} label={dict.language.switchTo} />
             </Suspense>
           </div>
-          <a
-            href={site.phones.mobile.href}
-            className="hidden items-center gap-2 rounded-full bg-accent-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600 md:inline-flex"
-          >
+          <PhoneLink className="hidden items-center gap-2 rounded-full bg-accent-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600 md:inline-flex">
             <PhoneIcon className="h-4 w-4" />
-            {site.phones.mobile.display}
-          </a>
+          </PhoneLink>
           <MobileMenu
             items={items}
             openLabel={dict.menu.open}
@@ -69,9 +66,7 @@ export function Header({ lang, dict }: { lang: Locale; dict: Dictionary }) {
               <div className="space-y-1 text-sm text-muted">
                 <p className="font-semibold text-ink">{dict.hours.title}</p>
                 <p>{dict.hours.byAppointment}</p>
-                <a href={site.phones.mobile.href} className="block font-semibold text-brand-700">
-                  {site.phones.mobile.display}
-                </a>
+                <PhoneLink className="block font-semibold text-brand-700" />
               </div>
             }
           />

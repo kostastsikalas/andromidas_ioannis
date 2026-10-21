@@ -1,7 +1,8 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { openingHours } from "@/content/site";
+import type { ClinicInfo } from "@/content/clinic";
+import { useClinic } from "@/lib/use-clinic";
 
 const toMinutes = (t: string) => {
   const [h, m] = t.split(":").map(Number);
@@ -22,9 +23,9 @@ function athensNow() {
   return { day, minutes: Number(get("hour")) * 60 + Number(get("minute")) };
 }
 
-function computeStatus() {
+function computeStatus(hours: ClinicInfo["hours"]) {
   const { day, minutes } = athensNow();
-  const open = (openingHours[day] ?? []).some(
+  const open = (hours[day] ?? []).some(
     ([from, to]) => minutes >= toMinutes(from) && minutes < toMinutes(to),
   );
   return `${day}:${open ? 1 : 0}`;
@@ -36,7 +37,8 @@ const subscribe = (cb: () => void) => {
 };
 
 function useStatus() {
-  const snapshot = useSyncExternalStore(subscribe, computeStatus, () => null);
+  const { hours } = useClinic();
+  const snapshot = useSyncExternalStore(subscribe, () => computeStatus(hours), () => null);
   if (!snapshot) return null;
   const [day, open] = snapshot.split(":");
   return { day: Number(day), open: open === "1" };

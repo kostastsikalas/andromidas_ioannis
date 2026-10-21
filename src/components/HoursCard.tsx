@@ -1,9 +1,14 @@
+"use client";
+
 import type { Dictionary } from "@/content/dictionary";
-import { displayWeek, openingHours, site, weekdayNames, type Locale } from "@/content/site";
+import { displayWeek, weekdayNames, type Locale } from "@/content/site";
+import { useClinic } from "@/lib/use-clinic";
+import { PhoneLink } from "./Clinic";
 import { ClockIcon } from "./Icons";
 import { OpenBadge, TodayMarker } from "./OpenStatus";
 
 export function HoursCard({ lang, dict, className = "" }: { lang: Locale; dict: Dictionary; className?: string }) {
+  const { hours } = useClinic();
   return (
     <div className={`rounded-3xl border border-line bg-white p-6 shadow-sm sm:p-7 ${className}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -17,7 +22,7 @@ export function HoursCard({ lang, dict, className = "" }: { lang: Locale; dict: 
 
       <dl className="mt-5 divide-y divide-line text-[15px]">
         {displayWeek.map((day) => {
-          const slots = openingHours[day];
+          const slots = hours[day]?.length ? hours[day] : null;
           return (
             <div key={day} className="flex items-start justify-between gap-4 py-2.5">
               <dt className="font-medium text-ink">
@@ -34,9 +39,7 @@ export function HoursCard({ lang, dict, className = "" }: { lang: Locale; dict: 
 
       <p className="mt-5 rounded-2xl bg-accent-500/[0.07] p-4 text-sm text-ink">
         {dict.hours.emergencies}{" "}
-        <a href={site.phones.mobile.href} className="font-bold text-accent-600 underline-offset-2 hover:underline">
-          {site.phones.mobile.display}
-        </a>
+        <PhoneLink className="font-bold text-accent-600 underline-offset-2 hover:underline" />
       </p>
     </div>
   );

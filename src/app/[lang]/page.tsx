@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Announcements } from "@/components/Announcements";
 import { ArticleCards } from "@/components/ArticleCards";
+import { AddressText, AreaChips, DirectionsButton, MapEmbed, PhoneButton } from "@/components/Clinic";
 import { HoursCard } from "@/components/HoursCard";
 import { ArrowRightIcon, CalendarIcon, MapPinIcon, PhoneIcon, ServiceGlyph } from "@/components/Icons";
 import { OpenBadge } from "@/components/OpenStatus";
@@ -11,7 +12,7 @@ import { announcements } from "@/content/announcements";
 import { articles } from "@/content/articles";
 import { getDictionary } from "@/content/dictionary";
 import { services } from "@/content/services";
-import { hasLocale, mapsDirectionsUrl, mapsEmbedUrl, site } from "@/content/site";
+import { hasLocale, site } from "@/content/site";
 import { paths } from "@/lib/paths";
 
 const highlightIcons = ["child", "ear", "home"] as const;
@@ -73,10 +74,10 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
             <p className="mt-5 max-w-xl px-1 text-[16px] leading-relaxed text-muted text-pretty sm:px-0 sm:text-lg">{t.heroText}</p>
 
             <div className="mt-5 flex flex-col gap-2.5 sm:mt-6 sm:flex-row sm:gap-3">
-              <ButtonLink href={site.phones.mobile.href} className="py-3.5 text-base">
+              <PhoneButton className="py-3.5 text-base">
                 <PhoneIcon className="h-5 w-5" />
-                {dict.cta.callNow} · {site.phones.mobile.display}
-              </ButtonLink>
+                {dict.cta.callNow} ·{" "}
+              </PhoneButton>
               <ButtonLink href={paths.appointment(lang)} variant="ghost" className="py-3.5 text-base">
                 <CalendarIcon className="h-5 w-5" />
                 {dict.cta.bookAppointment}
@@ -115,9 +116,13 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
                 <MapPinIcon className="h-5 w-5" />
               </span>
               <p className="text-sm leading-snug">
-                <span className="font-semibold text-ink">{site.address.street[lang]}</span>
+                <span className="font-semibold text-ink">
+                  <AddressText lang={lang} part="street" />
+                </span>
                 <br />
-                <span className="text-muted">{site.address.city[lang]}</span>
+                <span className="text-muted">
+                  <AddressText lang={lang} part="city" />
+                </span>
               </p>
             </div>
           </div>
@@ -206,34 +211,27 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
           <div>
             <SectionTitle title={t.visitTitle} />
             <address className="not-italic text-lg">
-              <p className="font-semibold text-ink">{site.address.street[lang]}</p>
+              <p className="font-semibold text-ink">
+                <AddressText lang={lang} part="street" />
+              </p>
               <p className="text-muted">
-                {site.address.city[lang]} {site.address.postalCode}, {site.address.region[lang]}
+                <AddressText lang={lang} part="city" /> <AddressText lang={lang} part="postalCode" />,{" "}
+                <AddressText lang={lang} part="region" />
               </p>
             </address>
             <div className="mt-5 flex flex-col gap-2.5 sm:mt-6 sm:flex-row sm:gap-3">
-              <ButtonLink href={mapsDirectionsUrl} external variant="secondary">
+              <DirectionsButton variant="secondary">
                 <MapPinIcon className="h-5 w-5" /> {dict.cta.directions}
-              </ButtonLink>
-              <ButtonLink href={site.phones.office.href} variant="ghost">
-                <PhoneIcon className="h-5 w-5" /> {site.phones.office.display}
-              </ButtonLink>
+              </DirectionsButton>
+              <PhoneButton which="office" variant="ghost">
+                <PhoneIcon className="h-5 w-5" />{" "}
+              </PhoneButton>
             </div>
             <h3 className="mt-10 font-display text-lg font-bold text-brand-900">{t.areasTitle}</h3>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {site.areas[lang].map((a) => (
-                <li key={a} className="rounded-full bg-brand-50 px-3 py-1.5 text-sm text-brand-800">{a}</li>
-              ))}
-            </ul>
+            <AreaChips lang={lang} className="rounded-full bg-brand-50 px-3 py-1.5 text-sm text-brand-800" />
           </div>
           <div className="overflow-hidden rounded-3xl border border-line bg-brand-50">
-            <iframe
-              title={dict.contact.map}
-              src={mapsEmbedUrl}
-              className="h-80 w-full lg:h-full lg:min-h-[26rem]"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+            <MapEmbed title={dict.contact.map} className="h-80 w-full lg:h-full lg:min-h-[26rem]" />
           </div>
         </Container>
       </section>

@@ -14,7 +14,8 @@ npm run build && npm start
 
 | What | File |
 | --- | --- |
-| Phones, email, address, hours, service areas | `src/content/site.ts` |
+| Phones, email, address, hours, service areas (edited from `/admin`) | `src/content/clinic.json` |
+| Name, title, site URL | `src/content/site.ts` |
 | UI texts (EL/EN) | `src/content/dictionary.ts` |
 | Services | `src/content/services.ts` |
 | Articles (edited from `/admin`) | `src/content/articles.json` |

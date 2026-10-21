@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { CheckIcon, PhoneIcon } from "@/components/Icons";
+import { PhoneButton } from "@/components/Clinic";
 import { ButtonLink, Container, PageHeader } from "@/components/ui";
 import { getDictionary } from "@/content/dictionary";
 import { doctor } from "@/content/doctor";
@@ -28,9 +29,9 @@ export default async function DoctorPage({ params }: PageProps<"/[lang]/doctor">
             <Image src="/images/doctor.jpg" alt={site.name[lang]} fill priority sizes="(min-width: 768px) 22rem, 80vw" className="object-cover object-[50%_30%]" />
           </div>
           <div className="hidden md:block">
-          <ButtonLink href={site.phones.mobile.href} className="mt-6 w-full">
-            <PhoneIcon className="h-5 w-5" /> {site.phones.mobile.display}
-          </ButtonLink>
+          <PhoneButton className="mt-6 w-full">
+            <PhoneIcon className="h-5 w-5" />{" "}
+          </PhoneButton>
           <ButtonLink href={paths.appointment(lang)} variant="ghost" className="mt-3 w-full">
             {dict.cta.bookAppointment}
           </ButtonLink>

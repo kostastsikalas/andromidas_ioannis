@@ -1,5 +1,5 @@
 import { getDictionary } from "@/content/dictionary";
-import { site, type Locale } from "@/content/site";
+import type { Locale } from "@/content/site";
 
 export function articleLabels(lang: Locale) {
   const dict = getDictionary(lang);
@@ -13,6 +13,5 @@ export function articleLabels(lang: Locale) {
     bookAppointment: dict.cta.bookAppointment,
     more: dict.cta.allArticles,
     notFound: dict.notFound.title,
-    phone: { href: site.phones.mobile.href, display: site.phones.mobile.display },
   };
 }

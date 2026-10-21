@@ -7,6 +7,7 @@ import type { Locale } from "@/content/site";
 import { useLiveArticles } from "@/lib/use-live-articles";
 import { paths } from "@/lib/paths";
 import { ArticleBody } from "./ArticleBody";
+import { PhoneLink } from "./Clinic";
 import { PhoneIcon } from "./Icons";
 
 export type ArticleViewLabels = {
@@ -19,7 +20,6 @@ export type ArticleViewLabels = {
   bookAppointment: string;
   more: string;
   notFound: string;
-  phone: { href: string; display: string };
 };
 
 type Props = {
@@ -100,12 +100,9 @@ export function ArticleView({ lang, slug, initial, labels }: Props) {
 
           <div lang={lang} className="mt-8 flex flex-col gap-4 rounded-3xl bg-brand-800 p-6 text-white sm:flex-row sm:items-center sm:justify-between">
             <p className="font-display text-lg font-bold">{labels.bookAppointment}</p>
-            <a
-              href={labels.phone.href}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-accent-500 px-5 py-3 text-[15px] font-semibold text-white shadow-sm transition hover:bg-accent-600"
-            >
-              <PhoneIcon className="h-5 w-5" /> {labels.phone.display}
-            </a>
+            <PhoneLink className="inline-flex items-center justify-center gap-2 rounded-full bg-accent-500 px-5 py-3 text-[15px] font-semibold text-white shadow-sm transition hover:bg-accent-600">
+              <PhoneIcon className="h-5 w-5" />{" "}
+            </PhoneLink>
           </div>
         </article>
 

@@ -4,6 +4,7 @@ import { site, type Locale } from "@/content/site";
 import { services } from "@/content/services";
 import { paths } from "@/lib/paths";
 import { navItems } from "./Header";
+import { AddressText, EmailLink, PhoneLink } from "./Clinic";
 import { MailIcon, MapPinIcon, PhoneIcon } from "./Icons";
 import { LogoMark } from "./Logo";
 
@@ -23,22 +24,23 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
             <li className="flex gap-3">
               <MapPinIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-300" />
               <span>
-                {site.address.street[lang]}, {site.address.city[lang]} {site.address.postalCode}
+                <AddressText lang={lang} part="street" />, <AddressText lang={lang} part="city" />{" "}
+                <AddressText lang={lang} part="postalCode" />
                 <br />
-                {site.address.region[lang]}
+                <AddressText lang={lang} part="region" />
               </span>
             </li>
             <li className="flex gap-3">
               <PhoneIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-300" />
               <span>
-                <a href={site.phones.mobile.href} className="hover:text-white">{site.phones.mobile.display}</a>
+                <PhoneLink className="hover:text-white" />
                 {" · "}
-                <a href={site.phones.office.href} className="hover:text-white">{site.phones.office.display}</a>
+                <PhoneLink which="office" className="hover:text-white" />
               </span>
             </li>
             <li className="flex gap-3">
               <MailIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-300" />
-              <a href={`mailto:${site.email}`} className="break-all hover:text-white">{site.email}</a>
+              <EmailLink className="break-all hover:text-white" />
             </li>
           </ul>
         </div>

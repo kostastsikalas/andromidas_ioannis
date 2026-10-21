@@ -3,6 +3,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import type { Announcement } from "@/content/announcements";
 import type { Article } from "@/content/articles";
+import type { ClinicInfo } from "@/content/clinic";
 
 /**
  * Where admin changes are saved:
@@ -15,6 +16,7 @@ export type StoreMode = "github" | "fs" | "readonly";
 const CONTENT_DIR = "src/content";
 const ARTICLES_FILE = "articles.json";
 const ANNOUNCEMENTS_FILE = "announcements.json";
+const CLINIC_FILE = "clinic.json";
 const IMAGES_DIR = "public/images/articles";
 
 export function storeMode(): StoreMode {
@@ -38,11 +40,11 @@ const gh = async (url: string, init?: RequestInit) => {
 };
 const branch = () => process.env.GITHUB_BRANCH || "main";
 
-async function githubRead<T>(file: string): Promise<{ list: T[]; sha: string }> {
+async function githubRead<T>(file: string): Promise<{ data: T; sha: string }> {
   const res = await gh(`${CONTENT_DIR}/${file}?ref=${branch()}`);
   if (!res.ok) throw new Error(`GitHub read failed: ${res.status}`);
   const json = (await res.json()) as { content: string; sha: string };
-  return { list: JSON.parse(Buffer.from(json.content, "base64").toString("utf8")), sha: json.sha };
+  return { data: JSON.parse(Buffer.from(json.content, "base64").toString("utf8")), sha: json.sha };
 }
 
 async function githubPut(filePath: string, content: Buffer, message: string, sha?: string) {
@@ -54,25 +56,25 @@ async function githubPut(filePath: string, content: Buffer, message: string, sha
   if (!res.ok) throw new Error(`GitHub write failed: ${res.status} ${await res.text()}`);
 }
 
-async function readList<T>(file: string): Promise<T[]> {
-  if (storeMode() === "github") return (await githubRead<T>(file)).list;
+async function readJson<T>(file: string): Promise<T> {
+  if (storeMode() === "github") return (await githubRead<T>(file)).data;
   return JSON.parse(await readFile(path.join(process.cwd(), "src/content", file), "utf8"));
 }
 
-/** Applies `change` to the latest list and saves it. Retries once if someone saved in between. */
-async function updateList<T>(file: string, change: (list: T[]) => T[], message: string) {
+/** Applies `change` to the latest saved value and saves it. Retries once if someone saved in between. */
+async function updateJson<T>(file: string, change: (current: T) => T, message: string) {
   const mode = storeMode();
   if (mode === "readonly") throw new Error("readonly");
-  const serialize = (list: T[]) => Buffer.from(JSON.stringify(list, null, 2) + "\n");
+  const serialize = (value: T) => Buffer.from(JSON.stringify(value, null, 2) + "\n");
 
   if (mode === "fs") {
-    const next = change(await readList<T>(file));
+    const next = change(await readJson<T>(file));
     await writeFile(path.join(process.cwd(), "src/content", file), serialize(next));
     return next;
   }
   for (let attempt = 0; ; attempt++) {
-    const { list, sha } = await githubRead<T>(file);
-    const next = change(list);
+    const { data, sha } = await githubRead<T>(file);
+    const next = change(data);
     try {
       await githubPut(`${CONTENT_DIR}/${file}`, serialize(next), message, sha);
       return next;
@@ -82,13 +84,16 @@ async function updateList<T>(file: string, change: (list: T[]) => T[], message: 
   }
 }
 
-export const readArticles = () => readList<Article>(ARTICLES_FILE);
+export const readArticles = () => readJson<Article[]>(ARTICLES_FILE);
 export const updateArticles = (change: (list: Article[]) => Article[], message: string) =>
-  updateList(ARTICLES_FILE, change, message);
+  updateJson(ARTICLES_FILE, change, message);
 
-export const readAnnouncements = () => readList<Announcement>(ANNOUNCEMENTS_FILE);
+export const readAnnouncements = () => readJson<Announcement[]>(ANNOUNCEMENTS_FILE);
 export const updateAnnouncements = (change: (list: Announcement[]) => Announcement[], message: string) =>
-  updateList(ANNOUNCEMENTS_FILE, change, message);
+  updateJson(ANNOUNCEMENTS_FILE, change, message);
+
+export const readClinic = () => readJson<ClinicInfo>(CLINIC_FILE);
+export const saveClinic = (clinic: ClinicInfo) => updateJson<ClinicInfo>(CLINIC_FILE, () => clinic, "Admin: update clinic details");
 
 export async function saveImage(fileName: string, data: Buffer) {
   const mode = storeMode();
