@@ -1,0 +1,92 @@
+{
+  "el": {
+    "eyebrow": "Ωτορινολαρυγγολογικό ιατρείο · Χερσόνησος Κρήτης",
+    "heroText": "Σύγχρονη διάγνωση και θεραπεία παθήσεων αυτιών, μύτης και λαιμού για παιδιά και ενήλικες, στον Λιμένα Χερσονήσου.",
+    "highlights": [
+      {
+        "title": "Ενηλίκων & Παίδων",
+        "text": "Εξειδίκευση στο Νοσοκομείο Παίδων «Π&Α Κυριακού»"
+      },
+      {
+        "title": "Σύγχρονος εξοπλισμός",
+        "text": "Ενδοσκόπηση, ωτομικροσκόπηση, ακοομετρία"
+      },
+      {
+        "title": "Επισκέψεις κατ’ οίκον",
+        "text": "Με φορητό εξοπλισμό για όσους δεν μετακινούνται"
+      }
+    ],
+    "servicesTitle": "Υπηρεσίες",
+    "servicesText": "Διάγνωση και θεραπεία για όλο το φάσμα της Ωτορινολαρυγγολογίας.",
+    "aboutTitle": "Καλώς ήρθατε",
+    "aboutText": [
+      "Το ιατρείο βρίσκεται στην οδό Δασκαλογιάννη 4 στον Λιμένα Χερσονήσου και είναι εξοπλισμένο με σύγχρονα ιατρικά μηχανήματα για τη διάγνωση και θεραπεία των παθήσεων των ώτων, της ρινός και του λάρυγγα, καθώς και των παθήσεων κεφαλής και τραχήλου σε παιδιά και ενήλικες.",
+      "Ασθενείς από τη Χερσόνησο, τα Μάλια, τις Γούβες και τις γειτονικές περιοχές επισκέπτονται το ιατρείο για εξειδικευμένη Ω.Ρ.Λ. εξέταση."
+    ],
+    "officeTitle": "Το ιατρείο",
+    "announcements": "Ανακοινώσεις",
+    "articlesTitle": "Ενημερωτικά άρθρα",
+    "areasTitle": "Περιοχές εξυπηρέτησης",
+    "visitTitle": "Επισκεφθείτε μας"
+  },
+  "en": {
+    "eyebrow": "Ear, Nose & Throat clinic · Hersonissos, Crete",
+    "heroText": "Modern diagnosis and treatment of ear, nose and throat conditions for children and adults, in Limenas Hersonissos.",
+    "highlights": [
+      {
+        "title": "Adults & children",
+        "text": "Trained at the “P&A Kyriakou” Children’s Hospital"
+      },
+      {
+        "title": "Modern equipment",
+        "text": "Endoscopy, ear microscopy, audiometry"
+      },
+      {
+        "title": "Home visits",
+        "text": "With portable equipment for patients who can’t travel"
+      }
+    ],
+    "servicesTitle": "Services",
+    "servicesText": "Diagnosis and treatment across the full range of Otolaryngology.",
+    "aboutTitle": "Welcome",
+    "aboutText": [
+      "The clinic is located at 4 Daskalogianni Str. in Limenas Hersonissos and is equipped with modern medical devices for the diagnosis and treatment of ear, nose and throat conditions, as well as head and neck conditions, in children and adults.",
+      "Patients from Hersonissos, Malia, Gouves and the surrounding areas — including visitors on holiday — visit the clinic for a specialist ENT consultation."
+    ],
+    "officeTitle": "The clinic",
+    "announcements": "Announcements",
+    "articlesTitle": "Patient information",
+    "areasTitle": "Areas we serve",
+    "visitTitle": "Visit us"
+  },
+  "de": {
+    "eyebrow": "HNO-Praxis · Chersonissos, Kreta",
+    "heroText": "Moderne Diagnostik und Behandlung von Erkrankungen an Ohren, Nase und Hals für Kinder und Erwachsene in Limenas Chersonissos.",
+    "highlights": [
+      {
+        "title": "Erwachsene & Kinder",
+        "text": "Ausgebildet am Kinderkrankenhaus „P&A Kyriakou“"
+      },
+      {
+        "title": "Moderne Ausstattung",
+        "text": "Endoskopie, Ohrmikroskopie, Audiometrie"
+      },
+      {
+        "title": "Hausbesuche",
+        "text": "Mit mobiler Ausrüstung für Patienten, die nicht mobil sind"
+      }
+    ],
+    "servicesTitle": "Leistungen",
+    "servicesText": "Diagnostik und Therapie aus dem gesamten Spektrum der Hals-Nasen-Ohrenheilkunde.",
+    "aboutTitle": "Willkommen",
+    "aboutText": [
+      "Die Praxis befindet sich in der Daskalogianni-Straße 4 in Limenas Chersonissos und ist mit modernen medizinischen Geräten für die Diagnose und Behandlung von Erkrankungen der Ohren, der Nase und des Halses sowie des Kopf-Hals-Bereichs bei Kindern und Erwachsenen ausgestattet.",
+      "Patienten aus Chersonissos, Malia, Gouves und den umliegenden Orten – auch Urlauber – kommen für eine fachärztliche HNO-Untersuchung in die Praxis."
+    ],
+    "officeTitle": "Die Praxis",
+    "announcements": "Mitteilungen",
+    "articlesTitle": "Patienteninformationen",
+    "areasTitle": "Einzugsgebiet",
+    "visitTitle": "So finden Sie uns"
+  }
+}

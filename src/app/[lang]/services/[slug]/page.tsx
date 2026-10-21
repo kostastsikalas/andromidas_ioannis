@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRightIcon, CalendarIcon, CheckIcon, PhoneIcon, ServiceGlyph } from "@/components/Icons";
+import { ArrowRightIcon, CheckIcon, PhoneIcon, ServiceGlyph } from "@/components/Icons";
 import { PhoneButton } from "@/components/Clinic";
-import { ButtonLink, Container, PageHeader } from "@/components/ui";
+import { Container, PageHeader } from "@/components/ui";
 import { getDictionary } from "@/content/dictionary";
 import { getService, services } from "@/content/services";
 import { elEn, hasLocale, locales, site } from "@/content/site";
@@ -102,9 +102,6 @@ export default async function ServicePage({ params }: PageProps<"/[lang]/service
             <PhoneButton className="mt-5 w-full">
               <PhoneIcon className="h-5 w-5" />{" "}
             </PhoneButton>
-            <ButtonLink href={paths.appointment(lang)} variant="ghost" className="mt-3 w-full">
-              <CalendarIcon className="h-5 w-5" /> {dict.form.title}
-            </ButtonLink>
           </div>
           <nav aria-label={dict.services.other}>
             <p className="mb-3 font-display font-bold text-brand-900">{dict.services.other}</p>

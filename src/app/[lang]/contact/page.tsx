@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { AppointmentForm } from "@/components/AppointmentForm";
 import { HoursCard } from "@/components/HoursCard";
 import { MailIcon, MapPinIcon, PhoneIcon } from "@/components/Icons";
 import { AreasText, ContactCards, DirectionsButton, MapEmbed } from "@/components/Clinic";
@@ -38,26 +37,20 @@ export default async function ContactPage({ params }: PageProps<"/[lang]/contact
           }}
         />
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[1.3fr_1fr]">
-          <section id="appointment" className="scroll-mt-28 rounded-3xl border border-line bg-white p-6 shadow-sm sm:p-8">
-            <h2 className="font-display text-2xl font-extrabold text-brand-900">{dict.form.title}</h2>
-            <p className="mb-6 mt-1 text-muted">{t.intro}</p>
-            <AppointmentForm lang={lang} t={dict.form} />
-          </section>
+        <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_1.4fr]">
           <HoursCard lang={lang} dict={dict} className="self-start" />
+          <section className="flex flex-col overflow-hidden rounded-3xl border border-line bg-white">
+            <MapEmbed title={t.map} className="h-80 w-full flex-1 lg:min-h-[24rem]" />
+            <div className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-muted">
+                {dict.home.areasTitle}: <AreasText lang={lang} />
+              </p>
+              <DirectionsButton variant="secondary" className="shrink-0">
+                <MapPinIcon className="h-5 w-5" /> {dict.cta.directions}
+              </DirectionsButton>
+            </div>
+          </section>
         </div>
-
-        <section className="mt-10 overflow-hidden rounded-3xl border border-line bg-white">
-          <MapEmbed title={t.map} className="h-80 w-full sm:h-[26rem]" />
-          <div className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-muted">
-              {dict.home.areasTitle}: <AreasText lang={lang} />
-            </p>
-            <DirectionsButton variant="secondary" className="shrink-0">
-              <MapPinIcon className="h-5 w-5" /> {dict.cta.directions}
-            </DirectionsButton>
-          </div>
-        </section>
       </Container>
     </>
   );

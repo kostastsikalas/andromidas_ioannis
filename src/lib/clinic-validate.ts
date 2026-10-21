@@ -1,4 +1,4 @@
-import type { ClinicInfo } from "@/content/clinic";
+import { parseMapPoint, type ClinicInfo } from "@/content/clinic";
 
 const text = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 const pair = (v: unknown, max: number) => {
@@ -32,6 +32,7 @@ export function validateClinic(input: unknown): { clinic: ClinicInfo } | { error
       region: pair(address.region, 120),
       postalCode: text(address.postalCode, 10).replace(/\s/g, ""),
     },
+    mapPoint: parseMapPoint(text(c.mapPoint, 2000)) ?? "invalid",
     hours: Array.from({ length: 7 }, (_, day) =>
       (Array.isArray(hours[day]) ? (hours[day] as unknown[]) : [])
         .map((slot) => (Array.isArray(slot) ? [text(slot[0], 5), text(slot[1], 5)] : ["", ""]) as [string, string])
@@ -45,6 +46,7 @@ export function validateClinic(input: unknown): { clinic: ClinicInfo } | { error
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clinic.email)) return { error: "invalid_email" };
   if (!clinic.address.street.el || !clinic.address.city.el || !clinic.address.region.el) return { error: "missing_address" };
   if (!/^\d{5}$/.test(clinic.address.postalCode)) return { error: "invalid_postal_code" };
+  if (clinic.mapPoint === "invalid") return { error: "invalid_map_point" };
   for (const slots of clinic.hours) {
     for (const [from, to] of slots) if (!time.test(from) || !time.test(to) || from >= to) return { error: "invalid_hours" };
   }

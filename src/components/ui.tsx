@@ -39,7 +39,7 @@ export function PageHeader({
   );
 }
 
-export function SectionTitle({ title, text, action }: { title: string; text?: string; action?: ReactNode }) {
+export function SectionTitle({ title, text, action }: { title: ReactNode; text?: ReactNode; action?: ReactNode }) {
   return (
     <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>

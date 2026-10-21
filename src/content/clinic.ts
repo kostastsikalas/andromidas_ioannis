@@ -14,6 +14,8 @@ export type ClinicInfo = {
     region: { el: string; en: string };
     postalCode: string;
   };
+  /** Exact map pin as "lat,lng"; when empty the map searches for the address instead. */
+  mapPoint: string;
   /** Opening hours per JS weekday (0 = Sunday), as [from, to] pairs in Europe/Athens time; [] = closed. */
   hours: [string, string][][];
   areas: { el: string[]; en: string[] };
@@ -28,10 +30,21 @@ export function telHref(display: string) {
 }
 
 const mapsQuery = (c: ClinicInfo) =>
-  `${c.address.street.el}, ${c.address.city.el} ${c.address.postalCode.replace(/^(\d{3})(\d{2})$/, "$1 $2")}`;
+  c.mapPoint || `${c.address.street.el}, ${c.address.city.el} ${c.address.postalCode.replace(/^(\d{3})(\d{2})$/, "$1 $2")}`;
+
+/** Finds "lat,lng" in pasted coordinates or a full Google Maps link (…/@lat,lng… or …!3dlat!4dlng…). */
+export function parseMapPoint(input: string): string | null {
+  const s = input.trim();
+  if (!s) return "";
+  const pin = s.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/) ?? s.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/) ?? s.match(/^(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)$/);
+  if (!pin) return null;
+  const [lat, lng] = [Number(pin[1]), Number(pin[2])];
+  if (Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
+  return `${lat},${lng}`;
+}
 
 export const directionsUrl = (c: ClinicInfo) =>
   `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapsQuery(c))}`;
 
 export const mapEmbedUrl = (c: ClinicInfo) =>
-  `https://maps.google.com/maps?q=${encodeURIComponent(mapsQuery(c))}&z=16&output=embed`;
+  `https://maps.google.com/maps?q=${encodeURIComponent(mapsQuery(c))}&z=17&output=embed`;

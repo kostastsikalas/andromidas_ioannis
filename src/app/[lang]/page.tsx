@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Announcements } from "@/components/Announcements";
+import { AnnouncementsSection } from "@/components/Announcements";
 import { ArticleCards } from "@/components/ArticleCards";
 import { AddressText, AreaChips, DirectionsButton, MapEmbed, PhoneButton } from "@/components/Clinic";
+import { HomeAbout, HomeHighlights, HomeText } from "@/components/HomeContent";
 import { HoursCard } from "@/components/HoursCard";
-import { ArrowRightIcon, CalendarIcon, MapPinIcon, PhoneIcon, ServiceGlyph } from "@/components/Icons";
+import { ArrowRightIcon, MapPinIcon, PhoneIcon, ServiceGlyph } from "@/components/Icons";
 import { OpenBadge } from "@/components/OpenStatus";
 import { ButtonLink, Container, SectionTitle } from "@/components/ui";
 import { announcements } from "@/content/announcements";
@@ -14,8 +15,6 @@ import { getDictionary } from "@/content/dictionary";
 import { services } from "@/content/services";
 import { hasLocale, site } from "@/content/site";
 import { paths } from "@/lib/paths";
-
-const highlightIcons = ["child", "ear", "home"] as const;
 
 const gallery = [
   { src: "/images/office.jpg", w: 1800, h: 1198, alt: { el: "Εξεταστήριο ιατρείου", en: "Examination room", de: "Untersuchungsraum" } },
@@ -28,25 +27,23 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
   const dict = getDictionary(lang);
-  const t = dict.home;
 
   return (
     <>
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-b from-brand-100/60 via-brand-50/30 to-transparent">
-        <Announcements lang={lang} initial={announcements} label={t.announcements} />
         <Container className="grid items-center gap-8 pb-10 pt-4 sm:pt-12 md:grid-cols-[1.15fr_1fr] md:gap-12 md:pb-20 md:pt-16">
           <div className="min-w-0">
             {/* Phones: photo card with the name on top of it */}
             <div className="relative -mx-1 overflow-hidden rounded-[1.75rem] bg-brand-800 shadow-xl shadow-brand-900/20 ring-1 ring-brand-900/5 md:hidden">
               <div className="relative aspect-[1/1] max-h-[22rem] w-full">
                 <Image
-                  src="/images/doctor.jpg"
+                  src="/images/doctor-2026.jpg"
                   alt={site.name[lang]}
                   fill
                   priority
                   sizes="100vw"
-                  className="object-cover object-[62%_38%]"
+                  className="object-cover object-[50%_75%]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-900/95 from-10% via-brand-900/45 via-40% to-transparent to-65%" />
                 <div className="absolute left-3 top-3 rounded-full bg-white/90 p-0.5 shadow-sm backdrop-blur empty:hidden">
@@ -65,50 +62,39 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
             </div>
 
             <div className="hidden md:block">
-              <p className="text-[13px] font-semibold uppercase tracking-wider text-brand-500">{t.eyebrow}</p>
+              <p className="text-[13px] font-semibold uppercase tracking-wider text-brand-500"><HomeText lang={lang} field="eyebrow" /></p>
               <h1 className="mt-3 font-display text-5xl font-extrabold leading-[1.1] tracking-tight text-brand-900 text-balance md:text-[3.4rem]">
                 {site.name[lang]}
               </h1>
               <p className="mt-2 font-display text-xl font-semibold text-brand-600">{site.title[lang]}</p>
             </div>
-            <p className="mt-5 max-w-xl px-1 text-[16px] leading-relaxed text-muted text-pretty sm:px-0 sm:text-lg">{t.heroText}</p>
+            <p className="mt-5 max-w-xl px-1 text-[16px] leading-relaxed text-muted text-pretty sm:px-0 sm:text-lg">
+              <HomeText lang={lang} field="heroText" />
+            </p>
 
             <div className="mt-5 flex flex-col gap-2.5 sm:mt-6 sm:flex-row sm:gap-3">
               <PhoneButton className="py-3.5 text-base">
                 <PhoneIcon className="h-5 w-5" />
                 {dict.cta.callNow} ·{" "}
               </PhoneButton>
-              <ButtonLink href={paths.appointment(lang)} variant="ghost" className="py-3.5 text-base">
-                <CalendarIcon className="h-5 w-5" />
-                {dict.cta.bookAppointment}
+              <ButtonLink href={paths.contact(lang)} variant="ghost" className="py-3.5 text-base">
+                <MapPinIcon className="h-5 w-5" />
+                {dict.nav.contact}
               </ButtonLink>
             </div>
 
-            <ul className="mt-6 grid grid-cols-3 gap-2 sm:mt-8 sm:gap-6">
-              {t.highlights.map((h, i) => (
-                <li
-                  key={h.title}
-                  className="flex flex-col items-center rounded-2xl border border-white bg-white/70 px-2 py-3.5 text-center shadow-sm sm:items-start sm:border-0 sm:bg-transparent sm:p-0 sm:text-left sm:shadow-none"
-                >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 text-brand-600 ring-1 ring-brand-100 sm:mb-2">
-                    <ServiceGlyph icon={highlightIcons[i]} className="h-5 w-5" />
-                  </span>
-                  <p className="mt-2 text-[13px] font-semibold leading-tight text-ink sm:mt-0 sm:text-base">{h.title}</p>
-                  <p className="hidden text-sm text-muted sm:block">{h.text}</p>
-                </li>
-              ))}
-            </ul>
+            <HomeHighlights lang={lang} />
           </div>
 
           <div className="relative hidden md:block">
             <div className="relative mx-auto aspect-[4/5] w-full overflow-hidden rounded-[2rem] bg-brand-100 shadow-xl shadow-brand-900/10 md:max-h-none md:max-w-none">
               <Image
-                src="/images/doctor.jpg"
+                src="/images/doctor-2026.jpg"
                 alt={site.name[lang]}
                 fill
                 priority
                 sizes="45vw"
-                className="object-cover object-[50%_25%]"
+                className="object-cover object-[50%_40%]"
               />
             </div>
             <div className="absolute -bottom-4 left-4 right-4 mx-auto flex max-w-xs items-center gap-3 rounded-2xl border border-line bg-white/95 p-3.5 shadow-lg backdrop-blur sm:left-auto sm:right-6">
@@ -133,8 +119,8 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
       <section className="py-14 sm:py-20">
         <Container>
           <SectionTitle
-            title={t.servicesTitle}
-            text={t.servicesText}
+            title={<HomeText lang={lang} field="servicesTitle" />}
+            text={<HomeText lang={lang} field="servicesText" />}
             action={
               <Link href={paths.services(lang)} className="inline-flex items-center gap-1.5 font-semibold text-brand-600 hover:text-brand-800">
                 {dict.cta.allServices} <ArrowRightIcon className="h-4 w-4" />
@@ -166,17 +152,14 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
       <section className="bg-band py-14 sm:py-20">
         <Container className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:gap-14">
           <div className="min-w-0">
-            <SectionTitle title={t.aboutTitle} />
-            <div className="space-y-4 text-lg leading-relaxed text-ink/85">
-              {t.aboutText.map((p) => (
-                <p key={p.slice(0, 20)}>{p}</p>
-              ))}
-            </div>
+            <SectionTitle title={<HomeText lang={lang} field="aboutTitle" />} />
+            <HomeAbout lang={lang} />
             <ButtonLink href={paths.doctor(lang)} variant="secondary" className="mt-7">
               {dict.cta.aboutDoctor} <ArrowRightIcon className="h-4 w-4" />
             </ButtonLink>
 
-            <h3 className="mt-12 font-display text-lg font-bold text-brand-900">{t.officeTitle}</h3>
+            <h3 className="mt-12 font-display text-lg font-bold text-brand-900"><HomeText lang={lang} field="officeTitle" />
+            </h3>
             <div className="-mx-4 mt-4 flex snap-x snap-mandatory scroll-px-4 sm:scroll-px-0 gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0">
               {gallery.map((g) => (
                 <div key={g.src} className="relative aspect-[4/3] w-64 shrink-0 snap-start overflow-hidden rounded-2xl bg-brand-50 sm:w-auto">
@@ -189,11 +172,12 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
         </Container>
       </section>
 
-      {/* Articles */}
+      {/* Announcements (only when there are any) + articles */}
       <section className="py-14 sm:py-20">
         <Container>
+          <AnnouncementsSection lang={lang} initial={announcements} title={<HomeText lang={lang} field="announcements" />} />
           <SectionTitle
-            title={t.articlesTitle}
+            title={<HomeText lang={lang} field="articlesTitle" />}
             text={dict.articles.greekOnly || dict.articles.intro}
             action={
               <Link href={paths.articles(lang)} className="inline-flex items-center gap-1.5 font-semibold text-brand-600 hover:text-brand-800">
@@ -209,7 +193,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
       <section className="bg-band py-14 sm:py-20">
         <Container className="grid gap-8 lg:grid-cols-2 lg:gap-12">
           <div>
-            <SectionTitle title={t.visitTitle} />
+            <SectionTitle title={<HomeText lang={lang} field="visitTitle" />} />
             <address className="not-italic text-lg">
               <p className="font-semibold text-ink">
                 <AddressText lang={lang} part="street" />
@@ -227,7 +211,8 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
                 <PhoneIcon className="h-5 w-5" />{" "}
               </PhoneButton>
             </div>
-            <h3 className="mt-10 font-display text-lg font-bold text-brand-900">{t.areasTitle}</h3>
+            <h3 className="mt-10 font-display text-lg font-bold text-brand-900"><HomeText lang={lang} field="areasTitle" />
+            </h3>
             <AreaChips lang={lang} className="rounded-full bg-brand-50 px-3 py-1.5 text-sm text-brand-800" />
           </div>
           <div className="overflow-hidden rounded-3xl border border-line bg-brand-50">

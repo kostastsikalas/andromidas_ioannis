@@ -5,7 +5,8 @@ import { athensToday, isActive, sortAnnouncements, type Announcement } from "@/c
 import type { Article } from "@/content/articles";
 import { sortArticles } from "@/content/articles";
 import type { ClinicInfo } from "@/content/clinic";
-import { displayWeek, weekdayNames } from "@/content/site";
+import type { HomeContent } from "@/content/home";
+import { displayWeek, localeInfo, locales, weekdayNames, type Locale } from "@/content/site";
 import { slugify } from "@/lib/article-text";
 import { runtimeConfig } from "@/lib/runtime-config";
 import { ArticleBody } from "../ArticleBody";
@@ -29,6 +30,11 @@ const errors: Record<string, string> = {
   invalid_email: "Μη έγκυρο email.",
   missing_address: "Συμπληρώστε οδό, πόλη και περιοχή.",
   invalid_postal_code: "Ο ταχυδρομικός κώδικας πρέπει να έχει 5 ψηφία.",
+  missing_home_text_el: "Συμπληρώστε όλα τα κείμενα της αρχικής στα Ελληνικά.",
+  missing_home_text_en: "Συμπληρώστε όλα τα κείμενα της αρχικής στα Αγγλικά (English).",
+  missing_home_text_de: "Συμπληρώστε όλα τα κείμενα της αρχικής στα Γερμανικά (Deutsch).",
+  invalid_map_point:
+    "Δεν βρέθηκε σημείο στο link του χάρτη. Ανοίξτε τη διεύθυνση στο Google Maps στον υπολογιστή και αντιγράψτε το link από τη γραμμή διευθύνσεων (όχι το σύντομο maps.app.goo.gl).",
   invalid_hours: "Ελέγξτε το ωράριο: κάθε «έως» πρέπει να είναι μετά το «από».",
   invalid_id: "Μη έγκυρη ανακοίνωση. Ανανεώστε τη σελίδα και δοκιμάστε ξανά.",
   too_large: "Η φωτογραφία είναι πολύ μεγάλη.",
@@ -105,10 +111,11 @@ const btn = "inline-flex items-center justify-center gap-2 rounded-full px-5 py-
 export function AdminApp() {
   const [state, setState] = useState<"loading" | "login" | "ready">("loading");
   const [mode, setMode] = useState<Mode>("fs");
-  const [section, setSection] = useState<"articles" | "announcements" | "clinic">("articles");
+  const [section, setSection] = useState<"articles" | "announcements" | "home" | "clinic">("articles");
   const [articles, setArticles] = useState<Article[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [clinic, setClinic] = useState<ClinicInfo | null>(null);
+  const [home, setHome] = useState<Record<Locale, HomeContent> | null>(null);
   const [editing, setEditing] = useState<{ article: Article; originalSlug: string } | null>(null);
   const [editingNotice, setEditingNotice] = useState<{ announcement: Announcement; isNew: boolean } | null>(null);
   const [notice, setNotice] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
@@ -121,11 +128,13 @@ export function AdminApp() {
 
   const load = useCallback(async () => {
     try {
-      const [data, notices, details] = await Promise.all([
+      const [data, notices, details, texts] = await Promise.all([
         call<{ articles: Article[]; mode: Mode }>(api("articles")),
         call<{ announcements: Announcement[] }>(api("announcements")),
         call<{ clinic: ClinicInfo }>(api("clinic")),
+        call<{ home: Record<Locale, HomeContent> }>(api("home")),
       ]);
+      setHome(texts.home);
       setArticles(sortArticles(data.articles));
       setAnnouncements(sortAnnouncements(notices.announcements));
       setClinic(details.clinic);
@@ -192,11 +201,12 @@ export function AdminApp() {
       )}
 
       {!editing && !editingNotice && (
-        <div className="mb-6 flex rounded-full bg-brand-50 p-1 text-[15px] font-semibold">
+        <div className="mb-6 grid grid-cols-2 gap-1 rounded-3xl bg-brand-50 p-1 text-[15px] font-semibold sm:flex sm:rounded-full">
           {(
             [
               ["articles", "Άρθρα"],
               ["announcements", "Ανακοινώσεις"],
+              ["home", "Αρχική"],
               ["clinic", "Στοιχεία"],
             ] as const
           ).map(([key, text]) => (
@@ -215,7 +225,25 @@ export function AdminApp() {
         </div>
       )}
 
-      {section === "clinic" ? (
+      {section === "home" ? (
+        home && (
+          <HomeEditor
+            key={JSON.stringify(home)}
+            initial={home}
+            onSave={async (next) => {
+              setNotice(null);
+              try {
+                const data = await call<{ home: Record<Locale, HomeContent> }>(api("home"), { method: "POST", body: JSON.stringify({ home: next }) });
+                setHome(data.home);
+                setNotice({ kind: "ok", text: savedMessage });
+                window.scrollTo({ top: 0 });
+              } catch (err) {
+                fail(err);
+              }
+            }}
+          />
+        )
+      ) : section === "clinic" ? (
         clinic && (
           <ClinicEditor
             key={JSON.stringify(clinic)}
@@ -780,6 +808,116 @@ function AnnouncementEditor({
   );
 }
 
+function HomeEditor({ initial, onSave }: { initial: Record<Locale, HomeContent>; onSave: (h: Record<Locale, HomeContent>) => Promise<void> }) {
+  const [all, setAll] = useState(initial);
+  const [lang, setLang] = useState<Locale>("el");
+  const [saving, setSaving] = useState(false);
+  const h = all[lang];
+  const set = (patch: Partial<HomeContent>) => setAll((prev) => ({ ...prev, [lang]: { ...prev[lang], ...patch } }));
+  const field = (key: keyof HomeContent, title: string, rows = 1) => {
+    const value = h[key] as string;
+    return (
+      <label className={label}>
+        {title}
+        {rows > 1 ? (
+          <textarea required rows={rows} value={value} onChange={(e) => set({ [key]: e.target.value })} className={input} />
+        ) : (
+          <input required value={value} onChange={(e) => set({ [key]: e.target.value })} className={input} />
+        )}
+      </label>
+    );
+  };
+
+  return (
+    <form
+      className="space-y-6"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        setSaving(true);
+        await onSave(all);
+        setSaving(false);
+      }}
+    >
+      <div>
+        <h1 className="font-display text-2xl font-extrabold text-brand-900 sm:text-3xl">Κείμενα αρχικής</h1>
+        <p className="text-sm text-muted">Τα κείμενα της αρχικής σελίδας, σε κάθε γλώσσα.</p>
+      </div>
+
+      <div className="flex rounded-full bg-brand-50 p-1 text-sm font-semibold">
+        {locales.map((l) => (
+          <button key={l} type="button" onClick={() => setLang(l)} className={`flex-1 rounded-full px-3 py-2 ${lang === l ? "bg-white text-brand-700 shadow-sm" : "text-muted"}`}>
+            {localeInfo[l].label}
+          </button>
+        ))}
+      </div>
+
+      <section key={lang} lang={lang} className="space-y-5 rounded-3xl border border-line bg-white p-5 sm:p-7">
+        <h2 className="font-display text-lg font-bold text-brand-900">Πάνω μέρος</h2>
+        {field("eyebrow", "Μικρός τίτλος (πάνω από το όνομα)")}
+        {field("heroText", "Κείμενο κάτω από το όνομα", 3)}
+        <div className="grid gap-4 sm:grid-cols-3">
+          {h.highlights.map((item, i) => (
+            <div key={i} className="space-y-2 rounded-2xl bg-brand-50/60 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted">Πλαίσιο {i + 1}</p>
+              <input
+                required
+                aria-label={`Πλαίσιο ${i + 1}: τίτλος`}
+                value={item.title}
+                onChange={(e) => set({ highlights: h.highlights.map((x, j) => (j === i ? { ...x, title: e.target.value } : x)) })}
+                className={`${input} !mt-0`}
+              />
+              <textarea
+                required
+                rows={3}
+                aria-label={`Πλαίσιο ${i + 1}: κείμενο`}
+                value={item.text}
+                onChange={(e) => set({ highlights: h.highlights.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)) })}
+                className={`${input} !mt-0 text-sm`}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="space-y-5 rounded-3xl border border-line bg-white p-5 sm:p-7">
+        <h2 className="font-display text-lg font-bold text-brand-900">Ενότητες</h2>
+        <div className="grid gap-5 sm:grid-cols-2">
+          {field("servicesTitle", "Τίτλος «Υπηρεσίες»")}
+          {field("servicesText", "Κείμενο κάτω από τις «Υπηρεσίες»")}
+        </div>
+        {field("aboutTitle", "Τίτλος καλωσορίσματος")}
+        <label className={label}>
+          Κείμενο καλωσορίσματος
+          <textarea
+            required
+            rows={8}
+            value={h.aboutText.join("\n\n")}
+            onChange={(e) => set({ aboutText: e.target.value.split(/\n\s*\n/) })}
+            className={input}
+          />
+          <span className={hint}>Κενή γραμμή ανάμεσα → νέα παράγραφος.</span>
+        </label>
+        <div className="grid gap-5 sm:grid-cols-2">
+          {field("officeTitle", "Τίτλος φωτογραφιών ιατρείου")}
+          {field("announcements", "Τίτλος «Ανακοινώσεις»")}
+          {field("articlesTitle", "Τίτλος «Άρθρα»")}
+          {field("visitTitle", "Τίτλος «Επισκεφθείτε μας»")}
+          {field("areasTitle", "Τίτλος «Περιοχές»")}
+        </div>
+      </section>
+
+      <div className="sticky bottom-0 -mx-4 flex gap-3 border-t border-line bg-white/95 px-4 py-4 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
+        <button type="submit" disabled={saving} className={`${btn} flex-1 bg-brand-600 text-white hover:bg-brand-700 sm:flex-none`}>
+          {saving ? "Αποθήκευση…" : "Αποθήκευση"}
+        </button>
+        <button type="button" onClick={() => setAll(initial)} className={`${btn} border border-line bg-white text-ink hover:bg-brand-50`}>
+          Ακύρωση
+        </button>
+      </div>
+    </form>
+  );
+}
+
 /** Two-line hint shown under a field. */
 const hint = "mt-1 block text-xs font-normal text-muted";
 
@@ -851,7 +989,14 @@ function ClinicEditor({ initial, onSave }: { initial: ClinicInfo; onSave: (c: Cl
             <input required inputMode="numeric" value={c.address.postalCode} onChange={(e) => setC({ ...c, address: { ...c.address, postalCode: e.target.value } })} className={input} />
           </label>
         </div>
-        <p className="text-xs text-muted">Ο χάρτης και το κουμπί «Οδηγίες» ακολουθούν αυτόματα τη νέα διεύθυνση.</p>
+        <label className={label}>
+          Σημείο στον χάρτη (προαιρετικό)
+          <input value={c.mapPoint ?? ""} onChange={(e) => setC({ ...c, mapPoint: e.target.value })} className={input} placeholder="π.χ. 35.3154305,25.3932516" />
+          <span className={hint}>
+            Συντεταγμένες ή το link του Google Maps από τη γραμμή διευθύνσεων του υπολογιστή. Αν μείνει κενό, ο χάρτης
+            και οι «Οδηγίες» ψάχνουν τη διεύθυνση.
+          </span>
+        </label>
       </section>
 
       <section className="rounded-3xl border border-line bg-white p-5 sm:p-7">

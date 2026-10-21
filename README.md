@@ -20,10 +20,10 @@ npm run build && npm start
 | Services | `src/content/services.ts` |
 | Articles (edited from `/admin`) | `src/content/articles.json` |
 | Home-page announcements (edited from `/admin`) | `src/content/announcements.json` |
+| Home-page texts in all languages (edited from `/admin`) | `src/content/home.json` |
 | Doctor bio | `src/content/doctor.ts` |
 | Terms of use | `src/content/terms.ts` |
 | Images | `public/images/` |
-| Appointment request API (Node, nodemailer) | `src/app/api/appointment/route.ts` |
 | Language redirect + old WordPress `?page_id=` redirects | `src/proxy.ts` |
 
 ## Admin panel (`/admin`)
@@ -39,15 +39,10 @@ UI: `src/components/admin/AdminApp.tsx` · API: `src/app/api/admin/*` · storage
 `../web-static/` is the same site exported to plain HTML + PHP for Apache hosting such as Papaki.
 Code is identical except `src/lib/runtime-config.ts`, `next.config.ts`, and the PHP files in `public/api/`.
 
-## Appointment emails
-
-Copy `.env.example` to `.env.local` and fill in SMTP settings. Without them, requests are only
-logged in development and the API returns 503 in production.
-
 ## Deploy
 
-Vercel (recommended) or any Node host. Set the SMTP env vars, then point the domain's DNS to the host.
+Vercel (recommended) or any Node host. Set the admin env vars (`.env.example`), then point the domain's DNS to the host.
 
 ## Handover
 
-Step-by-step delivery guide (Greek): [`docs/PARADOSI.md`](docs/PARADOSI.md) — Vercel setup, SMTP, domain/DNS, post-launch checklist.
+Step-by-step delivery guide (Greek): [`docs/PARADOSI.md`](docs/PARADOSI.md) — Vercel setup, admin, domain/DNS, post-launch checklist.

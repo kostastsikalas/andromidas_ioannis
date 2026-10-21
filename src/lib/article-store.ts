@@ -4,6 +4,8 @@ import path from "node:path";
 import type { Announcement } from "@/content/announcements";
 import type { Article } from "@/content/articles";
 import type { ClinicInfo } from "@/content/clinic";
+import type { HomeContent } from "@/content/home";
+import type { Locale } from "@/content/site";
 
 /**
  * Where admin changes are saved:
@@ -17,6 +19,7 @@ const CONTENT_DIR = "src/content";
 const ARTICLES_FILE = "articles.json";
 const ANNOUNCEMENTS_FILE = "announcements.json";
 const CLINIC_FILE = "clinic.json";
+const HOME_FILE = "home.json";
 const IMAGES_DIR = "public/images/articles";
 
 export function storeMode(): StoreMode {
@@ -94,6 +97,10 @@ export const updateAnnouncements = (change: (list: Announcement[]) => Announceme
 
 export const readClinic = () => readJson<ClinicInfo>(CLINIC_FILE);
 export const saveClinic = (clinic: ClinicInfo) => updateJson<ClinicInfo>(CLINIC_FILE, () => clinic, "Admin: update clinic details");
+
+type AllHome = Record<Locale, HomeContent>;
+export const readHome = () => readJson<AllHome>(HOME_FILE);
+export const saveHome = (home: AllHome) => updateJson<AllHome>(HOME_FILE, () => home, "Admin: update home page texts");
 
 export async function saveImage(fileName: string, data: Buffer) {
   const mode = storeMode();

@@ -3,11 +3,10 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { CheckIcon, PhoneIcon } from "@/components/Icons";
 import { PhoneButton } from "@/components/Clinic";
-import { ButtonLink, Container, PageHeader } from "@/components/ui";
+import { Container, PageHeader } from "@/components/ui";
 import { getDictionary } from "@/content/dictionary";
 import { doctor } from "@/content/doctor";
 import { hasLocale, site } from "@/content/site";
-import { paths } from "@/lib/paths";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/doctor">): Promise<Metadata> {
   const { lang } = await params;
@@ -26,15 +25,12 @@ export default async function DoctorPage({ params }: PageProps<"/[lang]/doctor">
       <Container className="grid gap-8 py-8 sm:gap-10 sm:py-16 md:grid-cols-[minmax(0,22rem)_1fr] md:gap-14">
         <div className="md:sticky md:top-28 md:self-start">
           <div className="relative mx-auto aspect-[4/3] w-full overflow-hidden rounded-3xl sm:aspect-[3/4] sm:max-w-xs bg-brand-100 shadow-lg md:max-w-none">
-            <Image src="/images/doctor.jpg" alt={site.name[lang]} fill priority sizes="(min-width: 768px) 22rem, 80vw" className="object-cover object-[50%_30%]" />
+            <Image src="/images/doctor-2026.jpg" alt={site.name[lang]} fill priority sizes="(min-width: 768px) 22rem, 80vw" className="object-cover object-[50%_57%]" />
           </div>
           <div className="hidden md:block">
           <PhoneButton className="mt-6 w-full">
             <PhoneIcon className="h-5 w-5" />{" "}
           </PhoneButton>
-          <ButtonLink href={paths.appointment(lang)} variant="ghost" className="mt-3 w-full">
-            {dict.cta.bookAppointment}
-          </ButtonLink>
           </div>
         </div>
 

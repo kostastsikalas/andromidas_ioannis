@@ -12,7 +12,7 @@ export function JsonLd({ lang }: { lang: Locale }) {
     name: site.name[lang],
     description: site.title[lang],
     url: `${site.url}/${lang}`,
-    image: `${site.url}/images/doctor.jpg`,
+    image: `${site.url}/images/doctor-2026.jpg`,
     telephone: ["+30 697 370 1243", "+30 2897 024664"],
     email: site.email,
     medicalSpecialty: "Otolaryngologic",

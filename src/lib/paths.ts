@@ -8,7 +8,6 @@ export const paths = {
   articles: (l: Locale) => `/${l}/articles`,
   article: (l: Locale, slug: string) => `/${l}/articles/${slug}`,
   contact: (l: Locale) => `/${l}/contact`,
-  appointment: (l: Locale) => `/${l}/contact#appointment`,
   terms: (l: Locale) => `/${l}/terms`,
 };
 

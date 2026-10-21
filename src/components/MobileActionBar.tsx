@@ -3,7 +3,7 @@ import type { Dictionary } from "@/content/dictionary";
 import type { Locale } from "@/content/site";
 import { paths } from "@/lib/paths";
 import { DirectionsLink, PhoneLink } from "./Clinic";
-import { CalendarIcon, MapPinIcon, PhoneIcon } from "./Icons";
+import { ClockIcon, MapPinIcon, PhoneIcon } from "./Icons";
 
 /** Thumb-reachable quick actions, shown on phones only. */
 export function MobileActionBar({ lang, dict }: { lang: Locale; dict: Dictionary }) {
@@ -18,9 +18,9 @@ export function MobileActionBar({ lang, dict }: { lang: Locale; dict: Dictionary
           <PhoneIcon className="h-5 w-5" />
           {dict.cta.call}
         </PhoneLink>
-        <Link href={paths.appointment(lang)} className={`${item} rounded-2xl text-brand-700 hover:bg-brand-50`}>
-          <CalendarIcon className="h-5 w-5" />
-          {dict.cta.appointment}
+        <Link href={paths.contact(lang)} className={`${item} rounded-2xl text-brand-700 hover:bg-brand-50`}>
+          <ClockIcon className="h-5 w-5" />
+          {dict.nav.contact}
         </Link>
         <DirectionsLink className={`${item} rounded-2xl text-brand-700 hover:bg-brand-50`}>
           <MapPinIcon className="h-5 w-5" />

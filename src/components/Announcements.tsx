@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { athensToday, isActive, sortAnnouncements, type Announcement } from "@/content/announcements";
-import type { Locale } from "@/content/site";
+import { localeInfo, type Locale } from "@/content/site";
 import { runtimeConfig } from "@/lib/runtime-config";
 import { MegaphoneIcon } from "./Icons";
-import { Container } from "./ui";
 
 /** English (also on German pages) only when the doctor wrote an English title; otherwise the whole Greek notice. */
 const inLang = (a: Announcement, lang: Locale) =>
@@ -17,11 +16,12 @@ const subscribe = (cb: () => void) => {
 };
 
 /**
- * Home-page notices. Build-time list first; the static PHP version then swaps in the latest
- * one saved from the admin. Expired notices are hidden in the browser, so they disappear on
- * their last day even without a rebuild.
+ * Home-page notices, shown above the articles as cards. Build-time list first; the static PHP
+ * version then swaps in the latest one saved from the admin. Expired notices are hidden in the
+ * browser, so they disappear on their last day even without a rebuild. Renders nothing when there
+ * are no current notices.
  */
-export function Announcements({ lang, initial, label }: { lang: Locale; initial: Announcement[]; label: string }) {
+export function AnnouncementsSection({ lang, initial, title }: { lang: Locale; initial: Announcement[]; title: ReactNode }) {
   const [list, setList] = useState(initial);
   const today = useSyncExternalStore(subscribe, athensToday, () => null);
 
@@ -44,36 +44,32 @@ export function Announcements({ lang, initial, label }: { lang: Locale; initial:
   if (!visible.length) return null;
 
   return (
-    <section aria-label={label} className="pt-4 sm:pt-8">
-      <Container>
-        <ul className="space-y-3">
-          {visible.map((a) => {
-            const { title, text } = inLang(a, lang);
-            return (
-              <li
-                key={a.id}
-                className={`flex gap-3.5 rounded-2xl border p-4 sm:gap-4 sm:p-5 ${
-                  a.important ? "border-accent-500/25 bg-accent-500/10" : "border-brand-100 bg-white/90"
-                }`}
-              >
-                <span
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
-                    a.important ? "bg-accent-500 text-white" : "bg-white text-brand-600 ring-1 ring-brand-100"
-                  }`}
-                >
-                  <MegaphoneIcon className="h-5 w-5" />
-                </span>
-                <div className="min-w-0 self-center">
-                  <p className={`font-display font-bold leading-snug ${a.important ? "text-accent-600" : "text-brand-900"}`}>
-                    {title}
-                  </p>
-                  {text && <p className="mt-1 whitespace-pre-line text-[15px] leading-relaxed text-ink/80">{text}</p>}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </Container>
-    </section>
+    <div className="mb-14 sm:mb-20">
+      <h2 className="mb-8 font-display text-2xl font-extrabold tracking-tight text-brand-900 sm:text-3xl">{title}</h2>
+      <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {visible.map((a) => {
+          const { title: heading, text } = inLang(a, lang);
+          return (
+            <li
+              key={a.id}
+              className={`flex h-full flex-col overflow-hidden rounded-2xl border bg-white ${
+                a.important ? "border-accent-500/30" : "border-line"
+              }`}
+            >
+              <div className={`flex items-center gap-3 px-5 py-3 ${a.important ? "bg-accent-500 text-white" : "bg-brand-50 text-brand-700"}`}>
+                <MegaphoneIcon className="h-5 w-5 shrink-0" />
+                <time dateTime={a.date} className="text-sm font-semibold">
+                  {new Date(a.date).toLocaleDateString(localeInfo[lang].tag, { day: "numeric", month: "long", year: "numeric" })}
+                </time>
+              </div>
+              <div className="p-5">
+                <p className="font-display text-lg font-bold leading-snug text-brand-900">{heading}</p>
+                {text && <p className="mt-1.5 whitespace-pre-line text-[15px] leading-relaxed text-muted">{text}</p>}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
