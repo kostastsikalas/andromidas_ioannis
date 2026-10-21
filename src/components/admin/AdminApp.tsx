@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { athensToday, isActive, sortAnnouncements, type Announcement } from "@/content/announcements";
 import type { Article } from "@/content/articles";
 import { sortArticles } from "@/content/articles";
 import { slugify } from "@/lib/article-text";
@@ -22,6 +23,7 @@ const errors: Record<string, string> = {
   missing_body: "Συμπληρώστε το κείμενο του άρθρου.",
   missing_image: "Ανεβάστε μια φωτογραφία.",
   invalid_date: "Μη έγκυρη ημερομηνία.",
+  invalid_id: "Μη έγκυρη ανακοίνωση. Ανανεώστε τη σελίδα και δοκιμάστε ξανά.",
   too_large: "Η φωτογραφία είναι πολύ μεγάλη.",
   not_jpeg: "Μη έγκυρο αρχείο εικόνας.",
   readonly: "Η αποθήκευση δεν έχει ρυθμιστεί στον server (δείτε τον οδηγό παράδοσης).",
@@ -50,6 +52,10 @@ async function call<T>(url: string, init?: RequestInit): Promise<T> {
 
 const today = () => new Date().toISOString().slice(0, 10);
 
+/** Adds a query parameter to an admin endpoint (the PHP one already has `?action=`). */
+const withParam = (url: string, key: string, value: string) =>
+  `${url}${url.includes("?") ? "&" : "?"}${key}=${encodeURIComponent(value)}`;
+
 const emptyArticle = (): Article => ({
   slug: "",
   date: today(),
@@ -61,6 +67,17 @@ const emptyArticle = (): Article => ({
   imageHeight: 1200,
   credit: "",
 });
+
+const emptyAnnouncement = (): Announcement => ({
+  id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+  date: today(),
+  until: "",
+  important: false,
+  title: { el: "", en: "" },
+  text: { el: "", en: "" },
+});
+
+const formatDate = (iso: string) => new Date(iso).toLocaleDateString("el-GR");
 
 /** Resizes a photo in the browser so uploads stay small and fast on mobile data. */
 async function resizePhoto(file: File, max = 1600) {
@@ -81,8 +98,11 @@ const btn = "inline-flex items-center justify-center gap-2 rounded-full px-5 py-
 export function AdminApp() {
   const [state, setState] = useState<"loading" | "login" | "ready">("loading");
   const [mode, setMode] = useState<Mode>("fs");
+  const [section, setSection] = useState<"articles" | "announcements">("articles");
   const [articles, setArticles] = useState<Article[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [editing, setEditing] = useState<{ article: Article; originalSlug: string } | null>(null);
+  const [editingNotice, setEditingNotice] = useState<{ announcement: Announcement; isNew: boolean } | null>(null);
   const [notice, setNotice] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
 
   const fail = useCallback((err: unknown) => {
@@ -93,8 +113,12 @@ export function AdminApp() {
 
   const load = useCallback(async () => {
     try {
-      const data = await call<{ articles: Article[]; mode: Mode }>(api("articles"));
+      const [data, notices] = await Promise.all([
+        call<{ articles: Article[]; mode: Mode }>(api("articles")),
+        call<{ announcements: Announcement[] }>(api("announcements")),
+      ]);
       setArticles(sortArticles(data.articles));
+      setAnnouncements(sortAnnouncements(notices.announcements));
       setMode(data.mode);
       setState("ready");
     } catch (err) {
@@ -139,6 +163,7 @@ export function AdminApp() {
         await call(api("logout"), { method: "POST" }).catch(() => {});
         setState("login");
         setEditing(null);
+        setEditingNotice(null);
       }}
     >
       {notice && (
@@ -156,7 +181,76 @@ export function AdminApp() {
         <p className="mb-6 rounded-2xl bg-amber-50 p-4 text-amber-900">{errors.readonly}</p>
       )}
 
-      {editing ? (
+      {!editing && !editingNotice && (
+        <div className="mb-6 flex rounded-full bg-brand-50 p-1 text-[15px] font-semibold">
+          {(
+            [
+              ["articles", "Άρθρα"],
+              ["announcements", "Ανακοινώσεις"],
+            ] as const
+          ).map(([key, text]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => {
+                setSection(key);
+                setNotice(null);
+              }}
+              className={`flex-1 rounded-full px-4 py-2.5 ${section === key ? "bg-white text-brand-700 shadow-sm" : "text-muted"}`}
+            >
+              {text}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {section === "announcements" ? (
+        editingNotice ? (
+          <AnnouncementEditor
+            key={editingNotice.announcement.id}
+            initial={editingNotice.announcement}
+            isNew={editingNotice.isNew}
+            onCancel={() => setEditingNotice(null)}
+            onSave={async (announcement) => {
+              setNotice(null);
+              try {
+                const data = await call<{ announcements: Announcement[] }>(api("announcements"), {
+                  method: "POST",
+                  body: JSON.stringify({ announcement }),
+                });
+                setAnnouncements(sortAnnouncements(data.announcements));
+                setEditingNotice(null);
+                setNotice({ kind: "ok", text: savedMessage });
+                window.scrollTo({ top: 0 });
+              } catch (err) {
+                fail(err);
+              }
+            }}
+          />
+        ) : (
+          <AnnouncementList
+            announcements={announcements}
+            onNew={() => {
+              setNotice(null);
+              setEditingNotice({ announcement: emptyAnnouncement(), isNew: true });
+            }}
+            onEdit={(a) => {
+              setNotice(null);
+              setEditingNotice({ announcement: structuredClone(a), isNew: false });
+            }}
+            onDelete={async (a) => {
+              if (!window.confirm(`Διαγραφή της ανακοίνωσης «${a.title.el}»;`)) return;
+              try {
+                const data = await call<{ announcements: Announcement[] }>(withParam(api("announcements"), "id", a.id), { method: "DELETE" });
+                setAnnouncements(sortAnnouncements(data.announcements));
+                setNotice({ kind: "ok", text: mode === "github" ? "Διαγράφηκε. Θα φύγει από το site σε 1–2 λεπτά." : "Διαγράφηκε." });
+              } catch (err) {
+                fail(err);
+              }
+            }}
+          />
+        )
+      ) : editing ? (
         <Editor
           key={editing.originalSlug || "new"}
           initial={editing.article}
@@ -194,7 +288,7 @@ export function AdminApp() {
           onDelete={async (a) => {
             if (!window.confirm(`Διαγραφή του άρθρου «${a.title.el}»; Η ενέργεια δεν αναιρείται.`)) return;
             try {
-              const data = await call<{ articles: Article[] }>(`${api("articles")}${api("articles").includes("?") ? "&" : "?"}slug=${encodeURIComponent(a.slug)}`, { method: "DELETE" });
+              const data = await call<{ articles: Article[] }>(withParam(api("articles"), "slug", a.slug), { method: "DELETE" });
               setArticles(sortArticles(data.articles));
               setNotice({ kind: "ok", text: mode === "github" ? "Διαγράφηκε. Θα φύγει από το site σε 1–2 λεπτά." : "Διαγράφηκε." });
             } catch (err) {
@@ -215,8 +309,8 @@ function Shell({ children, onLogout }: { children: React.ReactNode; onLogout?: (
           <div className="flex min-w-0 items-center gap-3">
             <LogoMark className="h-9 w-9 shrink-0" />
             <div className="min-w-0 leading-tight">
-              <p className="truncate font-display font-bold text-brand-900">Διαχείριση άρθρων</p>
-              <a href="/el/articles" target="_blank" className="text-xs text-brand-600 hover:underline">
+              <p className="truncate font-display font-bold text-brand-900">Διαχείριση site</p>
+              <a href="/el" target="_blank" className="text-xs text-brand-600 hover:underline">
                 Προβολή site ↗
               </a>
             </div>
@@ -246,7 +340,7 @@ function Login({ onLogin, notice }: { onLogin: (password: string) => Promise<voi
       }}
     >
       <h1 className="font-display text-2xl font-extrabold text-brand-900">Είσοδος</h1>
-      <p className="mt-1 text-sm text-muted">Συνδεθείτε για να προσθέσετε ή να επεξεργαστείτε άρθρα.</p>
+      <p className="mt-1 text-sm text-muted">Συνδεθείτε για να διαχειριστείτε άρθρα και ανακοινώσεις.</p>
       <label className={`${label} mt-6`}>
         Κωδικός
         <input name="password" type="password" required autoComplete="current-password" className={input} />
@@ -491,6 +585,157 @@ function Editor({
 
       <div className="sticky bottom-0 -mx-4 flex gap-3 border-t border-line bg-white/95 px-4 py-4 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
         <button type="submit" disabled={saving || uploading || !a.image || slugTaken || !a.slug} className={`${btn} flex-1 bg-brand-600 text-white hover:bg-brand-700 sm:flex-none`}>
+          {saving ? "Αποθήκευση…" : isNew ? "Δημοσίευση" : "Αποθήκευση αλλαγών"}
+        </button>
+        <button type="button" onClick={onCancel} className={`${btn} border border-line bg-white text-ink hover:bg-brand-50`}>
+          Άκυρο
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function AnnouncementList({
+  announcements,
+  onNew,
+  onEdit,
+  onDelete,
+}: {
+  announcements: Announcement[];
+  onNew: () => void;
+  onEdit: (a: Announcement) => void;
+  onDelete: (a: Announcement) => void;
+}) {
+  const now = athensToday();
+  const shown = announcements.filter((a) => isActive(a, now)).length;
+  return (
+    <>
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <div>
+          <h1 className="font-display text-2xl font-extrabold text-brand-900 sm:text-3xl">Ανακοινώσεις</h1>
+          <p className="text-sm text-muted">Εμφανίζονται στην αρχική σελίδα · {shown} ενεργές</p>
+        </div>
+        <button type="button" onClick={onNew} className={`${btn} shrink-0 whitespace-nowrap bg-accent-500 text-white shadow-sm hover:bg-accent-600`}>
+          + Νέα
+        </button>
+      </div>
+      {announcements.length === 0 && (
+        <p className="rounded-2xl border border-dashed border-line bg-white p-6 text-center text-muted">
+          Δεν υπάρχουν ανακοινώσεις. Π.χ. «Το ιατρείο θα παραμείνει κλειστό 10–20 Αυγούστου».
+        </p>
+      )}
+      <ul className="space-y-3">
+        {announcements.map((a) => {
+          const active = isActive(a, now);
+          return (
+            <li key={a.id} className={`flex flex-wrap items-center gap-x-4 gap-y-3 rounded-2xl border border-line bg-white p-4 sm:flex-nowrap ${active ? "" : "opacity-60"}`}>
+              <div className="min-w-0 flex-1">
+                <p className="line-clamp-2 font-semibold text-ink">
+                  {a.important && <span className="mr-2 rounded-full bg-accent-500/10 px-2 py-0.5 text-xs font-bold text-accent-600">Σημαντική</span>}
+                  {a.title.el}
+                </p>
+                <p className="mt-0.5 text-xs text-muted">
+                  {active ? (a.until ? `Εμφανίζεται έως ${formatDate(a.until)}` : "Εμφανίζεται μέχρι να διαγραφεί") : `Έληξε στις ${formatDate(a.until)}`}
+                  {a.title.en.trim() ? " · EL + EN" : " · EL"}
+                </p>
+              </div>
+              <div className="flex w-full shrink-0 gap-2 sm:w-auto">
+                <button type="button" onClick={() => onEdit(a)} className="flex-1 rounded-full bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-100">
+                  Επεξεργασία
+                </button>
+                <button type="button" onClick={() => onDelete(a)} className="flex-1 rounded-full border border-accent-500/20 px-4 py-2 text-sm font-semibold text-accent-600 hover:bg-accent-500/10">
+                  Διαγραφή
+                </button>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </>
+  );
+}
+
+function AnnouncementEditor({
+  initial,
+  isNew,
+  onSave,
+  onCancel,
+}: {
+  initial: Announcement;
+  isNew: boolean;
+  onSave: (a: Announcement) => Promise<void>;
+  onCancel: () => void;
+}) {
+  const [a, setA] = useState(initial);
+  const [showEnglish, setShowEnglish] = useState(Boolean(initial.title.en));
+  const [saving, setSaving] = useState(false);
+  const setLang = (key: "title" | "text", lang: "el" | "en", value: string) =>
+    setA((prev) => ({ ...prev, [key]: { ...prev[key], [lang]: value } }));
+
+  return (
+    <form
+      className="space-y-6"
+      onSubmit={async (e) => {
+        e.preventDefault();
+        setSaving(true);
+        // Without the English option ticked, nothing English is saved (the site then shows the Greek notice).
+        await onSave(showEnglish ? a : { ...a, title: { ...a.title, en: "" }, text: { ...a.text, en: "" } });
+        setSaving(false);
+      }}
+    >
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="font-display text-2xl font-extrabold text-brand-900">{isNew ? "Νέα ανακοίνωση" : "Επεξεργασία ανακοίνωσης"}</h1>
+        <button type="button" onClick={onCancel} className="text-sm font-semibold text-brand-600 hover:underline">
+          ← Πίσω
+        </button>
+      </div>
+
+      <section className="space-y-5 rounded-3xl border border-line bg-white p-5 sm:p-7">
+        <label className={label}>
+          Τίτλος *
+          <input required value={a.title.el} onChange={(e) => setLang("title", "el", e.target.value)} className={input} placeholder="π.χ. Θερινές διακοπές" />
+        </label>
+        <label className={label}>
+          Κείμενο (προαιρετικό)
+          <textarea rows={4} value={a.text.el} onChange={(e) => setLang("text", "el", e.target.value)} className={input} placeholder="π.χ. Το ιατρείο θα παραμείνει κλειστό από 10 έως 20 Αυγούστου." />
+        </label>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <label className={label}>
+            Εμφάνιση έως (προαιρετικό)
+            <input type="date" value={a.until} onChange={(e) => setA((prev) => ({ ...prev, until: e.target.value }))} className={input} />
+            <span className="mt-1 block text-xs font-normal text-muted">
+              {a.until ? "Μετά από αυτή τη μέρα κρύβεται αυτόματα." : "Κενό: εμφανίζεται μέχρι να τη διαγράψετε."}
+            </span>
+          </label>
+          <label className="flex items-center gap-3 self-center font-semibold text-ink">
+            <input type="checkbox" checked={a.important} onChange={(e) => setA((prev) => ({ ...prev, important: e.target.checked }))} className="h-5 w-5 accent-accent-500" />
+            Σημαντική (κόκκινο χρώμα)
+          </label>
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-line bg-white p-5 sm:p-7">
+        <label className="flex items-center gap-3 font-semibold text-ink">
+          <input type="checkbox" checked={showEnglish} onChange={(e) => setShowEnglish(e.target.checked)} className="h-5 w-5 accent-brand-600" />
+          Αγγλική έκδοση (προαιρετικό)
+        </label>
+        <p className="mt-1 text-sm text-muted">Αν δεν συμπληρωθεί, στην αγγλική σελίδα εμφανίζεται η ελληνική ανακοίνωση.</p>
+        {showEnglish && (
+          <div className="mt-5 space-y-5">
+            <label className={label}>
+              Title (English)
+              <input required value={a.title.en} onChange={(e) => setLang("title", "en", e.target.value)} className={input} />
+            </label>
+            <label className={label}>
+              Text (English)
+              <textarea rows={4} value={a.text.en} onChange={(e) => setLang("text", "en", e.target.value)} className={input} />
+            </label>
+          </div>
+        )}
+      </section>
+
+      <div className="sticky bottom-0 -mx-4 flex gap-3 border-t border-line bg-white/95 px-4 py-4 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
+        <button type="submit" disabled={saving} className={`${btn} flex-1 bg-brand-600 text-white hover:bg-brand-700 sm:flex-none`}>
           {saving ? "Αποθήκευση…" : isNew ? "Δημοσίευση" : "Αποθήκευση αλλαγών"}
         </button>
         <button type="button" onClick={onCancel} className={`${btn} border border-line bg-white text-ink hover:bg-brand-50`}>

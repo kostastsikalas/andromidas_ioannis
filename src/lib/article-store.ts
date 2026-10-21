@@ -1,6 +1,7 @@
 import "server-only";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
+import type { Announcement } from "@/content/announcements";
 import type { Article } from "@/content/articles";
 
 /**
@@ -10,7 +11,10 @@ import type { Article } from "@/content/articles";
  */
 export type StoreMode = "github" | "fs" | "readonly";
 
-const ARTICLES_PATH = "src/content/articles.json";
+/** JSON lists in src/content/ (a fixed folder, so the build doesn't trace the whole project). */
+const CONTENT_DIR = "src/content";
+const ARTICLES_FILE = "articles.json";
+const ANNOUNCEMENTS_FILE = "announcements.json";
 const IMAGES_DIR = "public/images/articles";
 
 export function storeMode(): StoreMode {
@@ -34,8 +38,8 @@ const gh = async (url: string, init?: RequestInit) => {
 };
 const branch = () => process.env.GITHUB_BRANCH || "main";
 
-async function githubRead(): Promise<{ list: Article[]; sha: string }> {
-  const res = await gh(`${ARTICLES_PATH}?ref=${branch()}`);
+async function githubRead<T>(file: string): Promise<{ list: T[]; sha: string }> {
+  const res = await gh(`${CONTENT_DIR}/${file}?ref=${branch()}`);
   if (!res.ok) throw new Error(`GitHub read failed: ${res.status}`);
   const json = (await res.json()) as { content: string; sha: string };
   return { list: JSON.parse(Buffer.from(json.content, "base64").toString("utf8")), sha: json.sha };
@@ -50,33 +54,41 @@ async function githubPut(filePath: string, content: Buffer, message: string, sha
   if (!res.ok) throw new Error(`GitHub write failed: ${res.status} ${await res.text()}`);
 }
 
-export async function readArticles(): Promise<Article[]> {
-  if (storeMode() === "github") return (await githubRead()).list;
-  return JSON.parse(await readFile(path.join(process.cwd(), ARTICLES_PATH), "utf8"));
+async function readList<T>(file: string): Promise<T[]> {
+  if (storeMode() === "github") return (await githubRead<T>(file)).list;
+  return JSON.parse(await readFile(path.join(process.cwd(), "src/content", file), "utf8"));
 }
 
 /** Applies `change` to the latest list and saves it. Retries once if someone saved in between. */
-export async function updateArticles(change: (list: Article[]) => Article[], message: string) {
+async function updateList<T>(file: string, change: (list: T[]) => T[], message: string) {
   const mode = storeMode();
   if (mode === "readonly") throw new Error("readonly");
-  const serialize = (list: Article[]) => Buffer.from(JSON.stringify(list, null, 2) + "\n");
+  const serialize = (list: T[]) => Buffer.from(JSON.stringify(list, null, 2) + "\n");
 
   if (mode === "fs") {
-    const next = change(await readArticles());
-    await writeFile(path.join(process.cwd(), ARTICLES_PATH), serialize(next));
+    const next = change(await readList<T>(file));
+    await writeFile(path.join(process.cwd(), "src/content", file), serialize(next));
     return next;
   }
   for (let attempt = 0; ; attempt++) {
-    const { list, sha } = await githubRead();
+    const { list, sha } = await githubRead<T>(file);
     const next = change(list);
     try {
-      await githubPut(ARTICLES_PATH, serialize(next), message, sha);
+      await githubPut(`${CONTENT_DIR}/${file}`, serialize(next), message, sha);
       return next;
     } catch (err) {
       if (attempt >= 1 || !String(err).includes("409")) throw err;
     }
   }
 }
+
+export const readArticles = () => readList<Article>(ARTICLES_FILE);
+export const updateArticles = (change: (list: Article[]) => Article[], message: string) =>
+  updateList(ARTICLES_FILE, change, message);
+
+export const readAnnouncements = () => readList<Announcement>(ANNOUNCEMENTS_FILE);
+export const updateAnnouncements = (change: (list: Announcement[]) => Announcement[], message: string) =>
+  updateList(ANNOUNCEMENTS_FILE, change, message);
 
 export async function saveImage(fileName: string, data: Buffer) {
   const mode = storeMode();

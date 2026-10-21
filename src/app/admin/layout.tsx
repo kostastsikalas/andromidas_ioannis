@@ -6,7 +6,7 @@ const inter = Inter({ variable: "--font-inter", subsets: ["latin", "greek"], dis
 const commissioner = Commissioner({ variable: "--font-commissioner", subsets: ["latin", "greek"], weight: ["700", "800"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Διαχείριση άρθρων",
+  title: "Διαχείριση site",
   robots: { index: false, follow: false },
 };
 

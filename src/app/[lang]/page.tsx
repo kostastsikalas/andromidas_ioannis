@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Announcements } from "@/components/Announcements";
 import { ArticleCards } from "@/components/ArticleCards";
 import { HoursCard } from "@/components/HoursCard";
 import { ArrowRightIcon, CalendarIcon, MapPinIcon, PhoneIcon, ServiceGlyph } from "@/components/Icons";
 import { OpenBadge } from "@/components/OpenStatus";
 import { ButtonLink, Container, SectionTitle } from "@/components/ui";
+import { announcements } from "@/content/announcements";
 import { articles } from "@/content/articles";
 import { getDictionary } from "@/content/dictionary";
 import { services } from "@/content/services";
@@ -31,6 +33,7 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-b from-brand-100/60 via-brand-50/30 to-transparent">
+        <Announcements lang={lang} initial={announcements} label={t.announcements} />
         <Container className="grid items-center gap-8 pb-10 pt-4 sm:pt-12 md:grid-cols-[1.15fr_1fr] md:gap-12 md:pb-20 md:pt-16">
           <div className="min-w-0">
             {/* Phones: photo card with the name on top of it */}

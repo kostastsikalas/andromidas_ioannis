@@ -132,3 +132,10 @@ const serviceIcons: Record<ServiceIcon, (p: IconProps) => React.ReactElement> = 
 };
 
 export const ServiceGlyph = ({ icon, ...p }: IconProps & { icon: ServiceIcon }) => serviceIcons[icon](p);
+
+export const MegaphoneIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <path d="M3 10v4a1 1 0 0 0 1 1h2l5 4V5L6 9H4a1 1 0 0 0-1 1Z" />
+    <path d="M15 9a3 3 0 0 1 0 6M18 6a7 7 0 0 1 0 12" />
+  </svg>
+);

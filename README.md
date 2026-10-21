@@ -18,6 +18,7 @@ npm run build && npm start
 | UI texts (EL/EN) | `src/content/dictionary.ts` |
 | Services | `src/content/services.ts` |
 | Articles (edited from `/admin`) | `src/content/articles.json` |
+| Home-page announcements (edited from `/admin`) | `src/content/announcements.json` |
 | Doctor bio | `src/content/doctor.ts` |
 | Terms of use | `src/content/terms.ts` |
 | Images | `public/images/` |
@@ -26,9 +27,10 @@ npm run build && npm start
 
 ## Admin panel (`/admin`)
 
-The doctor logs in with `ADMIN_PASSWORD` to add, edit or delete articles and photos.
+The doctor logs in with `ADMIN_PASSWORD` to add, edit or delete articles, photos and home-page announcements
+(optional end date, after which they hide themselves).
 On Vercel each save is a commit to this repo through the GitHub API (`GITHUB_TOKEN`), which triggers a redeploy.
-Locally (`npm run dev`) changes are written straight to `src/content/articles.json` and `public/images/articles/`.
+Locally (`npm run dev`) changes are written straight to `src/content/*.json` and `public/images/articles/`.
 UI: `src/components/admin/AdminApp.tsx` · API: `src/app/api/admin/*` · storage: `src/lib/article-store.ts`.
 
 ## Static version
