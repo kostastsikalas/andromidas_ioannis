@@ -27,7 +27,7 @@ npm run build && npm start
 
 ## Admin panel (`/admin`)
 
-The doctor logs in with `ADMIN_PASSWORD` to add, edit or delete articles, photos and home-page announcements
+The doctor logs in with `ADMIN_EMAIL` + `ADMIN_PASSWORD` (the only account allowed) to add, edit or delete articles, photos and home-page announcements
 (optional end date, after which they hide themselves).
 On Vercel each save is a commit to this repo through the GitHub API (`GITHUB_TOKEN`), which triggers a redeploy.
 Locally (`npm run dev`) changes are written straight to `src/content/*.json` and `public/images/articles/`.

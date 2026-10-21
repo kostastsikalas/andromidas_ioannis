@@ -6,6 +6,8 @@ const COOKIE = "admin_session";
 const MAX_AGE_S = 7 * 24 * 60 * 60;
 
 const password = () => process.env.ADMIN_PASSWORD ?? "";
+const email = () => normalizeEmail(process.env.ADMIN_EMAIL ?? "");
+const normalizeEmail = (v: string) => v.trim().toLowerCase();
 const secret = () => process.env.ADMIN_SECRET || password();
 
 const sign = (value: string) => createHmac("sha256", secret()).update(value).digest("base64url");
@@ -16,10 +18,15 @@ function safeEqual(a: string, b: string) {
   return x.length === y.length && timingSafeEqual(x, y);
 }
 
-export const adminConfigured = () => password().length >= 8;
+/** Only the account set in ADMIN_EMAIL + ADMIN_PASSWORD can sign in. */
+export const adminConfigured = () => password().length >= 8 && email().includes("@");
 
-export function checkPassword(candidate: string) {
-  return adminConfigured() && safeEqual(candidate, password());
+export function checkCredentials(candidateEmail: string, candidatePassword: string) {
+  if (!adminConfigured()) return false;
+  // Check both, so a wrong email and a wrong password take the same time.
+  const emailOk = safeEqual(normalizeEmail(candidateEmail), email());
+  const passwordOk = safeEqual(candidatePassword, password());
+  return emailOk && passwordOk;
 }
 
 export async function startSession() {

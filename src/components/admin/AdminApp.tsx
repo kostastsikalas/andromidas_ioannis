@@ -14,7 +14,7 @@ type Mode = "github" | "fs" | "static" | "readonly";
 const api = runtimeConfig.adminApi;
 
 const errors: Record<string, string> = {
-  wrong_password: "Λάθος κωδικός.",
+  wrong_password: "Λάθος email ή κωδικός.",
   rate_limited: "Πολλές προσπάθειες. Δοκιμάστε ξανά σε λίγα λεπτά.",
   unauthorized: "Η σύνδεση έληξε. Συνδεθείτε ξανά.",
   invalid_slug: "Η διεύθυνση (URL) του άρθρου δεν είναι έγκυρη.",
@@ -139,10 +139,10 @@ export function AdminApp() {
       <Shell>
         <Login
           notice={notice}
-          onLogin={async (password) => {
+          onLogin={async (email, password) => {
             setNotice(null);
             try {
-              await call(api("login"), { method: "POST", body: JSON.stringify({ password }) });
+              await call(api("login"), { method: "POST", body: JSON.stringify({ email, password }) });
               await load();
             } catch (err) {
               fail(err);
@@ -327,7 +327,7 @@ function Shell({ children, onLogout }: { children: React.ReactNode; onLogout?: (
   );
 }
 
-function Login({ onLogin, notice }: { onLogin: (password: string) => Promise<void>; notice: { kind: string; text: string } | null }) {
+function Login({ onLogin, notice }: { onLogin: (email: string, password: string) => Promise<void>; notice: { kind: string; text: string } | null }) {
   const [busy, setBusy] = useState(false);
   return (
     <form
@@ -335,13 +335,18 @@ function Login({ onLogin, notice }: { onLogin: (password: string) => Promise<voi
       onSubmit={async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setBusy(true);
-        await onLogin(String(new FormData(e.currentTarget).get("password") ?? ""));
+        const form = new FormData(e.currentTarget);
+        await onLogin(String(form.get("email") ?? ""), String(form.get("password") ?? ""));
         setBusy(false);
       }}
     >
       <h1 className="font-display text-2xl font-extrabold text-brand-900">Είσοδος</h1>
       <p className="mt-1 text-sm text-muted">Συνδεθείτε για να διαχειριστείτε άρθρα και ανακοινώσεις.</p>
       <label className={`${label} mt-6`}>
+        Email
+        <input name="email" type="email" required autoComplete="username" inputMode="email" className={input} />
+      </label>
+      <label className={`${label} mt-4`}>
         Κωδικός
         <input name="password" type="password" required autoComplete="current-password" className={input} />
       </label>
