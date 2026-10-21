@@ -6,7 +6,7 @@ import { MailIcon, MapPinIcon, PhoneIcon } from "@/components/Icons";
 import { AreasText, ContactCards, DirectionsButton, MapEmbed } from "@/components/Clinic";
 import { Container, PageHeader } from "@/components/ui";
 import { getDictionary } from "@/content/dictionary";
-import { hasLocale, site } from "@/content/site";
+import { elEn, hasLocale, site } from "@/content/site";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/contact">): Promise<Metadata> {
   const { lang } = await params;
@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/contact">)
   const d = getDictionary(lang);
   return {
     title: d.contact.title,
-    description: `${site.address.street[lang]}, ${site.address.city[lang]} · ${site.phones.mobile.display} · ${site.phones.office.display}`,
+    description: `${elEn(site.address.street, lang)}, ${elEn(site.address.city, lang)} · ${site.phones.mobile.display} · ${site.phones.office.display}`,
   };
 }
 

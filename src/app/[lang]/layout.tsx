@@ -6,7 +6,7 @@ import { Header } from "@/components/Header";
 import { JsonLd } from "@/components/JsonLd";
 import { MobileActionBar } from "@/components/MobileActionBar";
 import { getDictionary } from "@/content/dictionary";
-import { hasLocale, locales, site } from "@/content/site";
+import { hasLocale, localeInfo, locales, site } from "@/content/site";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin", "greek"], display: "swap" });
@@ -25,17 +25,19 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
   const name = site.name[lang];
-  const description =
-    lang === "el"
-      ? "Ωτορινολαρυγγολόγος ενηλίκων & παίδων στον Λιμένα Χερσονήσου Ηρακλείου. Ενδοσκόπηση, ακοομετρία, νεογνικός έλεγχος ακοής, επεμβάσεις, επισκέψεις κατ’ οίκον. Τηλ. 697 370 1243."
-      : "ENT surgeon (Otolaryngologist) for adults & children in Hersonissos, Crete. Endoscopy, hearing tests, newborn hearing screening, minor surgery, home visits. Tel. +30 697 370 1243.";
+  const description = {
+    el: "Ωτορινολαρυγγολόγος ενηλίκων & παίδων στον Λιμένα Χερσονήσου Ηρακλείου. Ενδοσκόπηση, ακοομετρία, νεογνικός έλεγχος ακοής, επεμβάσεις, επισκέψεις κατ’ οίκον. Τηλ. 697 370 1243.",
+    en: "ENT surgeon (Otolaryngologist) for adults & children in Hersonissos, Crete. Endoscopy, hearing tests, newborn hearing screening, minor surgery, home visits. Tel. +30 697 370 1243.",
+    de: "HNO-Arzt für Erwachsene & Kinder in Chersonissos, Kreta. Endoskopie, Hörtests, Neugeborenen-Hörscreening, kleine Eingriffe, Hausbesuche. Tel. +30 697 370 1243.",
+  }[lang];
+  const town = { el: "Χερσόνησος", en: "Hersonissos", de: "Chersonissos" }[lang];
   return {
     metadataBase: new URL(site.url),
-    title: { default: `${name} – ${site.title[lang]} | ${lang === "el" ? "Χερσόνησος" : "Hersonissos"}`, template: `%s | ${name}` },
+    title: { default: `${name} – ${site.title[lang]} | ${town}`, template: `%s | ${name}` },
     description,
     openGraph: {
       type: "website",
-      locale: lang === "el" ? "el_GR" : "en_US",
+      locale: localeInfo[lang].og,
       siteName: name,
       images: [{ url: "/images/office.jpg", width: 1800, height: 1198 }],
     },
@@ -62,7 +64,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:shadow"
         >
-          {lang === "el" ? "Μετάβαση στο περιεχόμενο" : "Skip to content"}
+          {{ el: "Μετάβαση στο περιεχόμενο", en: "Skip to content", de: "Zum Inhalt springen" }[lang]}
         </a>
         <JsonLd lang={lang} />
         <Header lang={lang} dict={dict} />

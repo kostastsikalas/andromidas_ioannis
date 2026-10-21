@@ -21,7 +21,7 @@ const el = {
     readArticle: "Διαβάστε",
   },
   menu: { open: "Άνοιγμα μενού", close: "Κλείσιμο μενού" },
-  language: { label: "Γλώσσα", switchTo: "English" },
+  language: { label: "Γλώσσα" },
   hours: {
     title: "Ωράριο ιατρείου",
     byAppointment: "Κατόπιν ραντεβού",
@@ -71,6 +71,7 @@ const el = {
     disclaimer:
       "Το κείμενο αυτό έχει ως σκοπό να ενημερώσει γενικά για ιατρικά θέματα και δεν υποκαθιστά σε καμία περίπτωση την εξέταση από τον γιατρό σας.",
     greekOnly: "",
+    notTranslated: { el: "", en: "" },
     photoCredit: "Φωτογραφία",
   },
   contact: {
@@ -127,7 +128,7 @@ const en: Dictionary = {
     readArticle: "Read",
   },
   menu: { open: "Open menu", close: "Close menu" },
-  language: { label: "Language", switchTo: "Ελληνικά" },
+  language: { label: "Language" },
   hours: {
     title: "Office hours",
     byAppointment: "By appointment",
@@ -177,6 +178,7 @@ const en: Dictionary = {
     disclaimer:
       "This text is intended for general information on medical topics and in no way replaces an examination by your doctor.",
     greekOnly: "These articles are currently available in Greek only.",
+    notTranslated: { el: "This article is currently available in Greek only.", en: "" },
     photoCredit: "Photo",
   },
   contact: {
@@ -210,6 +212,114 @@ const en: Dictionary = {
   notFound: { title: "Page not found", back: "Back to home" },
 };
 
-const dictionaries: Record<Locale, Dictionary> = { el, en };
+const de: Dictionary = {
+  nav: {
+    home: "Startseite",
+    doctor: "Der Arzt",
+    services: "Leistungen",
+    articles: "Artikel",
+    contact: "Kontakt",
+  },
+  cta: {
+    call: "Anrufen",
+    callNow: "Jetzt anrufen",
+    directions: "Route",
+    appointment: "Termin",
+    bookAppointment: "Termin vereinbaren",
+    learnMore: "Mehr erfahren",
+    allServices: "Alle Leistungen",
+    allArticles: "Alle Artikel",
+    aboutDoctor: "Den Arzt kennenlernen",
+    readArticle: "Lesen",
+  },
+  menu: { open: "Menü öffnen", close: "Menü schließen" },
+  language: { label: "Sprache" },
+  hours: {
+    title: "Sprechzeiten",
+    byAppointment: "Nach Vereinbarung",
+    closed: "Geschlossen",
+    openNow: "Jetzt geöffnet",
+    closedNow: "Jetzt geschlossen",
+    today: "Heute",
+    emergencies: "Für Notfälle und Termine rufen Sie an unter",
+  },
+  home: {
+    eyebrow: "HNO-Praxis · Chersonissos, Kreta",
+    heroText:
+      "Moderne Diagnostik und Behandlung von Erkrankungen an Ohren, Nase und Hals für Kinder und Erwachsene in Limenas Chersonissos.",
+    highlights: [
+      { title: "Erwachsene & Kinder", text: "Ausgebildet am Kinderkrankenhaus „P&A Kyriakou“" },
+      { title: "Moderne Ausstattung", text: "Endoskopie, Ohrmikroskopie, Audiometrie" },
+      { title: "Hausbesuche", text: "Mit mobiler Ausrüstung für Patienten, die nicht mobil sind" },
+    ],
+    servicesTitle: "Leistungen",
+    servicesText: "Diagnostik und Therapie aus dem gesamten Spektrum der Hals-Nasen-Ohrenheilkunde.",
+    aboutTitle: "Willkommen",
+    aboutText: [
+      "Die Praxis befindet sich in der Daskalogianni-Straße 4 in Limenas Chersonissos und ist mit modernen medizinischen Geräten für die Diagnose und Behandlung von Erkrankungen der Ohren, der Nase und des Halses sowie des Kopf-Hals-Bereichs bei Kindern und Erwachsenen ausgestattet.",
+      "Patienten aus Chersonissos, Malia, Gouves und den umliegenden Orten – auch Urlauber – kommen für eine fachärztliche HNO-Untersuchung in die Praxis.",
+    ],
+    officeTitle: "Die Praxis",
+    announcements: "Mitteilungen",
+    articlesTitle: "Patienteninformationen",
+    areasTitle: "Einzugsgebiet",
+    visitTitle: "So finden Sie uns",
+  },
+  services: {
+    title: "Leistungen",
+    intro: "In der Praxis werden die folgenden HNO-Leistungen angeboten.",
+    conditions: "Häufige Erkrankungen",
+    procedures: "Untersuchungen & Eingriffe in der Praxis",
+    other: "Weitere Leistungen",
+  },
+  doctor: {
+    title: "Der Arzt",
+    education: "Studium & Ausbildung",
+    memberships: "Mitglied der",
+  },
+  articles: {
+    title: "Artikel",
+    intro: "Verständliche Informationen zu häufigen HNO-Themen.",
+    disclaimer:
+      "Dieser Text dient der allgemeinen Information über medizinische Themen und ersetzt in keinem Fall die Untersuchung durch Ihren Arzt.",
+    greekOnly: "Die Artikel sind derzeit nur auf Griechisch bzw. Englisch verfügbar.",
+    notTranslated: {
+      el: "Dieser Artikel ist derzeit nur auf Griechisch verfügbar.",
+      en: "Dieser Artikel ist derzeit nur auf Englisch verfügbar.",
+    },
+    photoCredit: "Foto",
+  },
+  contact: {
+    title: "Kontakt",
+    intro: "Rufen Sie uns an oder senden Sie eine Terminanfrage – wir rufen Sie zurück.",
+    address: "Adresse",
+    phone: "Telefon",
+    mobile: "Mobil",
+    office: "Praxis",
+    email: "E-Mail",
+    map: "Karte",
+  },
+  form: {
+    title: "Terminanfrage",
+    name: "Vor- und Nachname",
+    phone: "Telefon",
+    email: "E-Mail (optional)",
+    date: "Wunschtermin (optional)",
+    message: "Kurze Beschreibung des Problems",
+    submit: "Anfrage senden",
+    sending: "Wird gesendet…",
+    success: "Vielen Dank! Wir haben Ihre Anfrage erhalten und rufen Sie in Kürze zur Bestätigung an.",
+    error: "Etwas ist schiefgelaufen. Bitte rufen Sie uns an unter",
+    note: "Eine Anfrage ist noch kein bestätigter Termin. In Notfällen rufen Sie bitte direkt an.",
+    consent: "Ich bin mit der Verarbeitung meiner Daten zur Bearbeitung dieser Anfrage einverstanden.",
+  },
+  footer: {
+    rights: "Alle Rechte vorbehalten.",
+    terms: "Nutzungsbedingungen",
+  },
+  notFound: { title: "Seite nicht gefunden", back: "Zur Startseite" },
+};
+
+const dictionaries: Record<Locale, Dictionary> = { el, en, de };
 
 export const getDictionary = (locale: Locale) => dictionaries[locale];

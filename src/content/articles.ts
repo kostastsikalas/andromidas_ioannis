@@ -1,4 +1,4 @@
-import type { Locale } from "./site";
+import { elEn, type Locale } from "./site";
 import data from "./articles.json";
 
 /**
@@ -30,9 +30,7 @@ export const articles: Article[] = sortArticles(data as Article[]);
 
 export const getArticle = (slug: string) => articles.find((a) => a.slug === slug);
 
-/** Text in the requested language, falling back to Greek. */
-export function localized(field: { el: string; en: string }, lang: Locale) {
-  return (lang === "en" && field.en.trim()) || field.el;
-}
+/** Text for a page in `lang`: Greek, or the English text (falling back to Greek) on English and German pages. */
+export const localized = (field: { el: string; en: string }, lang: Locale) => elEn(field, lang);
 
 export const hasEnglishBody = (a: Article) => a.body.en.trim().length > 0;

@@ -7,9 +7,9 @@ import { runtimeConfig } from "@/lib/runtime-config";
 import { MegaphoneIcon } from "./Icons";
 import { Container } from "./ui";
 
-/** English only when the doctor wrote an English title; otherwise the whole Greek notice. */
+/** English (also on German pages) only when the doctor wrote an English title; otherwise the whole Greek notice. */
 const inLang = (a: Announcement, lang: Locale) =>
-  lang === "en" && a.title.en ? { title: a.title.en, text: a.text.en } : { title: a.title.el, text: a.text.el };
+  lang !== "el" && a.title.en ? { title: a.title.en, text: a.text.en } : { title: a.title.el, text: a.text.el };
 
 const subscribe = (cb: () => void) => {
   const id = setInterval(cb, 60 * 60_000);

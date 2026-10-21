@@ -18,10 +18,10 @@ import { paths } from "@/lib/paths";
 const highlightIcons = ["child", "ear", "home"] as const;
 
 const gallery = [
-  { src: "/images/office.jpg", w: 1800, h: 1198, alt: { el: "Εξεταστήριο ιατρείου", en: "Examination room" } },
-  { src: "/images/audiometer.jpg", w: 1800, h: 1350, alt: { el: "Ακοογράφος", en: "Audiometer" } },
-  { src: "/images/ear-microscope.jpg", w: 1800, h: 1350, alt: { el: "Ωτομικροσκόπιο", en: "Ear microscope" } },
-  { src: "/images/endoscopes.jpg", w: 1800, h: 1280, alt: { el: "Ενδοσκόπια", en: "Endoscopes" } },
+  { src: "/images/office.jpg", w: 1800, h: 1198, alt: { el: "Εξεταστήριο ιατρείου", en: "Examination room", de: "Untersuchungsraum" } },
+  { src: "/images/audiometer.jpg", w: 1800, h: 1350, alt: { el: "Ακοογράφος", en: "Audiometer", de: "Audiometer" } },
+  { src: "/images/ear-microscope.jpg", w: 1800, h: 1350, alt: { el: "Ωτομικροσκόπιο", en: "Ear microscope", de: "Ohrmikroskop" } },
+  { src: "/images/endoscopes.jpg", w: 1800, h: 1280, alt: { el: "Ενδοσκόπια", en: "Endoscopes", de: "Endoskope" } },
 ];
 
 export default async function HomePage({ params }: PageProps<"/[lang]">) {

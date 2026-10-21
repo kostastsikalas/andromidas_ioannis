@@ -1,4 +1,4 @@
-import { openingHours, site, type Locale } from "@/content/site";
+import { elEn, openingHours, site, type Locale } from "@/content/site";
 import { services } from "@/content/services";
 
 const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -18,13 +18,13 @@ export function JsonLd({ lang }: { lang: Locale }) {
     medicalSpecialty: "Otolaryngologic",
     address: {
       "@type": "PostalAddress",
-      streetAddress: site.address.street[lang],
-      addressLocality: site.address.city[lang],
-      addressRegion: site.address.region[lang],
+      streetAddress: elEn(site.address.street, lang),
+      addressLocality: elEn(site.address.city, lang),
+      addressRegion: elEn(site.address.region, lang),
       postalCode: site.address.postalCode,
       addressCountry: site.address.country,
     },
-    areaServed: site.areas[lang],
+    areaServed: elEn(site.areas, lang),
     availableService: services.map((s) => ({ "@type": "MedicalProcedure", name: s.title[lang] })),
     openingHoursSpecification: Object.entries(openingHours).flatMap(([day, slots]) =>
       slots.map(([opens, closes]) => ({

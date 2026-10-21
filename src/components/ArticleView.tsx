@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { hasEnglishBody, localized, type Article } from "@/content/articles";
-import type { Locale } from "@/content/site";
+import { localeInfo, type Locale } from "@/content/site";
 import { useLiveArticles } from "@/lib/use-live-articles";
 import { paths } from "@/lib/paths";
 import { ArticleBody } from "./ArticleBody";
@@ -13,7 +13,8 @@ import { PhoneIcon } from "./Icons";
 export type ArticleViewLabels = {
   home: string;
   articles: string;
-  greekOnly: string;
+  /** Notice shown when the article isn't in the page's language, keyed by the language it is shown in. */
+  notTranslated: { el: string; en: string };
   photoCredit: string;
   disclaimerEl: string;
   disclaimerEn: string;
@@ -44,7 +45,7 @@ export function ArticleView({ lang, slug, initial, labels }: Props) {
     );
   }
 
-  const english = lang === "en" && hasEnglishBody(article);
+  const english = lang !== "el" && hasEnglishBody(article);
   const bodyLang: Locale = english ? "en" : "el";
   const more = all.filter((a) => a.slug !== slug).slice(0, 3);
 
@@ -62,7 +63,7 @@ export function ArticleView({ lang, slug, initial, labels }: Props) {
           </h1>
           {article.date && (
             <p className="mt-3 text-sm text-muted">
-              {new Date(article.date).toLocaleDateString(lang === "el" ? "el-GR" : "en-GB", { day: "numeric", month: "long", year: "numeric" })}
+              {new Date(article.date).toLocaleDateString(localeInfo[lang].tag, { day: "numeric", month: "long", year: "numeric" })}
             </p>
           )}
         </div>
@@ -70,8 +71,8 @@ export function ArticleView({ lang, slug, initial, labels }: Props) {
 
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
         <article lang={bodyLang} className="mx-auto max-w-3xl">
-          {lang === "en" && !english && (
-            <p lang="en" className="mb-6 rounded-2xl bg-brand-50 p-4 text-brand-800">{labels.greekOnly}</p>
+          {bodyLang !== lang && labels.notTranslated[bodyLang] && (
+            <p lang={lang} className="mb-6 rounded-2xl bg-brand-50 p-4 text-brand-800">{labels.notTranslated[bodyLang]}</p>
           )}
           <figure className="overflow-hidden rounded-3xl bg-brand-50">
             <Image

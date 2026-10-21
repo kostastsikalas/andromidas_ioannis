@@ -6,7 +6,7 @@ export function articleLabels(lang: Locale) {
   return {
     home: dict.nav.home,
     articles: dict.nav.articles,
-    greekOnly: getDictionary("en").articles.greekOnly,
+    notTranslated: dict.articles.notTranslated,
     photoCredit: dict.articles.photoCredit,
     disclaimerEl: getDictionary("el").articles.disclaimer,
     disclaimerEn: getDictionary("en").articles.disclaimer,

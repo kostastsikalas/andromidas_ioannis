@@ -44,7 +44,7 @@ export async function POST(request: Request) {
   const email = str(body.email, 120);
   const date = str(body.date, 10);
   const message = str(body.message, 1500);
-  const lang = body.lang === "en" ? "en" : "el";
+  const lang = body.lang === "en" || body.lang === "de" ? body.lang : "el";
 
   if (!name || !/^[0-9+\s()-]{8,20}$/.test(phone) || !body.consent) {
     return Response.json({ error: "invalid_fields" }, { status: 422 });

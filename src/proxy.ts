@@ -52,7 +52,7 @@ function preferredLocale(request: NextRequest): Locale {
     })
     .sort((a, b) => b.q - a.q);
   const match = ranked.find((r) => (locales as readonly string[]).includes(r.lang));
-  // Greek is the default; visitors whose browser prefers another language get English.
+  // Greek is the default; visitors whose browser prefers a language we don't have get English.
   if (match) return match.lang as Locale;
   return ranked.length && ranked[0].lang ? "en" : "el";
 }
@@ -62,14 +62,15 @@ export function proxy(request: NextRequest) {
 
   const pageId = searchParams.get("page_id");
   if (pageId) {
-    const target = legacyPages[pageId] ?? (searchParams.get("lang") === "en" ? "/en" : "/el");
+    const target = legacyPages[pageId] ?? (searchParams.get("lang") === "en" ? "/en" : searchParams.get("lang") === "de" ? "/de" : "/el");
     return NextResponse.redirect(new URL(target, request.url), 308);
   }
 
   const hasLocale = locales.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`));
   if (hasLocale) return;
 
-  const locale = searchParams.get("lang") === "en" ? "en" : preferredLocale(request);
+  const requested = searchParams.get("lang") ?? "";
+  const locale = (locales as readonly string[]).includes(requested) ? (requested as Locale) : preferredLocale(request);
   const url = new URL(`/${locale}${pathname === "/" ? "" : pathname}`, request.url);
   return NextResponse.redirect(url);
 }

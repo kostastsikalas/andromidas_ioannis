@@ -12,4 +12,3 @@ export const paths = {
   terms: (l: Locale) => `/${l}/terms`,
 };
 
-export const otherLocale = (l: Locale): Locale => (l === "el" ? "en" : "el");

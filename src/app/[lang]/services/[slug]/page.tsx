@@ -7,7 +7,7 @@ import { PhoneButton } from "@/components/Clinic";
 import { ButtonLink, Container, PageHeader } from "@/components/ui";
 import { getDictionary } from "@/content/dictionary";
 import { getService, services } from "@/content/services";
-import { hasLocale, locales, site } from "@/content/site";
+import { elEn, hasLocale, locales, site } from "@/content/site";
 import { paths } from "@/lib/paths";
 
 export function generateStaticParams() {
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/services/[
   if (!hasLocale(lang) || !service) return {};
   return {
     title: service.title[lang],
-    description: `${service.summary[lang]} ${site.name[lang]}, ${site.address.city[lang]}.`,
+    description: `${service.summary[lang]} ${site.name[lang]}, ${elEn(site.address.city, lang)}.`,
     alternates: { languages: Object.fromEntries(locales.map((l) => [l, paths.service(l, slug)])) },
   };
 }

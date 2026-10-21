@@ -2,41 +2,51 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { Locale } from "@/content/site";
-import { otherLocale, paths } from "@/lib/paths";
+import { localeInfo, locales, type Locale } from "@/content/site";
+import { paths } from "@/lib/paths";
 import { GlobeIcon } from "./Icons";
-
-const className =
-  "inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-2 text-sm font-medium text-ink/80 transition hover:border-brand-200 hover:bg-brand-50";
 
 function swapLocale(pathname: string, to: Locale) {
   const [, , ...rest] = pathname.split("/");
   return `/${[to, ...rest].join("/")}`.replace(/\/$/, "");
 }
 
-export function LanguageSwitch({ lang, label }: { lang: Locale; label: string }) {
-  const pathname = usePathname();
-  const to = otherLocale(lang);
+/** EL · EN · DE, with the current language highlighted. */
+function Switch({ lang, label, href }: { lang: Locale; label: string; href: (to: Locale) => string }) {
   return (
-    <Link href={swapLocale(pathname, to)} hrefLang={to} lang={to} className={className}>
-      <GlobeIcon className="h-4 w-4" />
-      {label}
-    </Link>
+    <nav
+      aria-label={label}
+      className="inline-flex items-center gap-0.5 rounded-full border border-line p-1 text-sm font-semibold text-ink/70"
+    >
+      <GlobeIcon className="mx-1 h-4 w-4 text-ink/50" />
+      {locales.map((l) =>
+        l === lang ? (
+          <span key={l} aria-current="true" className="rounded-full bg-brand-600 px-2.5 py-1 text-white">
+            {localeInfo[l].short}
+          </span>
+        ) : (
+          <Link
+            key={l}
+            href={href(l)}
+            hrefLang={l}
+            lang={l}
+            title={localeInfo[l].label}
+            aria-label={localeInfo[l].label}
+            className="rounded-full px-2.5 py-1 transition hover:bg-brand-50 hover:text-brand-700"
+          >
+            {localeInfo[l].short}
+          </Link>
+        ),
+      )}
+    </nav>
   );
 }
 
-export function LanguageSwitchFallback({
-  lang,
-  label,
-}: {
-  lang: Locale;
-  label: string;
-}) {
-  const to = otherLocale(lang);
-  return (
-    <Link href={paths.home(to)} hrefLang={to} lang={to} className={className}>
-      <GlobeIcon className="h-4 w-4" />
-      {label}
-    </Link>
-  );
+export function LanguageSwitch({ lang, label }: { lang: Locale; label: string }) {
+  const pathname = usePathname();
+  return <Switch lang={lang} label={label} href={(to) => swapLocale(pathname, to)} />;
+}
+
+export function LanguageSwitchFallback({ lang, label }: { lang: Locale; label: string }) {
+  return <Switch lang={lang} label={label} href={paths.home} />;
 }

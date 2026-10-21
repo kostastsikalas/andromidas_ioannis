@@ -2,7 +2,7 @@
 
 import type { ComponentProps, ReactNode } from "react";
 import { directionsUrl, mapEmbedUrl, telHref } from "@/content/clinic";
-import type { Locale } from "@/content/site";
+import { elEn, type Locale } from "@/content/site";
 import { useClinic } from "@/lib/use-clinic";
 import { ButtonLink } from "./ui";
 
@@ -60,7 +60,7 @@ type AddressPart = "street" | "city" | "region" | "postalCode";
 
 export function AddressText({ lang, part }: { lang: Locale; part: AddressPart }) {
   const { address } = useClinic();
-  return <>{part === "postalCode" ? address.postalCode : address[part][lang]}</>;
+  return <>{part === "postalCode" ? address.postalCode : elEn(address[part], lang)}</>;
 }
 
 export function DirectionsLink(props: Omit<ComponentProps<"a">, "href" | "target" | "rel">) {
@@ -84,13 +84,13 @@ export function MapEmbed({ title, className }: { title: string; className: strin
 }
 
 export function AreasText({ lang }: { lang: Locale }) {
-  return <>{useClinic().areas[lang].join(", ")}</>;
+  return <>{elEn(useClinic().areas, lang).join(", ")}</>;
 }
 
 export function AreaChips({ lang, className }: { lang: Locale; className: string }) {
   return (
     <ul className="mt-4 flex flex-wrap gap-2">
-      {useClinic().areas[lang].map((a) => (
+      {elEn(useClinic().areas, lang).map((a) => (
         <li key={a} className={className}>
           {a}
         </li>
@@ -117,7 +117,7 @@ export function ContactCards({
     {
       icon: icons.pin,
       label: labels.address,
-      value: `${c.address.street[lang]}, ${c.address.city[lang]} ${c.address.postalCode}`,
+      value: `${elEn(c.address.street, lang)}, ${elEn(c.address.city, lang)} ${c.address.postalCode}`,
       href: directionsUrl(c),
       wide: true,
     },

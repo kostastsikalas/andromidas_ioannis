@@ -19,12 +19,16 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/articles/[
   if (!hasLocale(lang) || !article) return {};
   const translated = hasEnglishBody(article);
   return {
-    title: localized(article.title, lang),
-    description: localized(article.excerpt, lang),
-    // Without an English body both locales show the Greek text, so point search engines at the Greek page.
-    alternates: translated
-      ? { languages: Object.fromEntries(locales.map((l) => [l, paths.article(l, slug)])) }
-      : { canonical: paths.article("el", slug) },
+    // Title and description follow the language the article text is shown in.
+    title: localized(article.title, translated ? lang : "el"),
+    description: localized(article.excerpt, translated ? lang : "el"),
+    // Articles exist in Greek and sometimes English; German pages show one of those, so they point
+    // search engines at the page with the original text instead of competing with it.
+    alternates: !translated
+      ? { canonical: paths.article("el", slug) }
+      : lang === "de"
+        ? { canonical: paths.article("en", slug) }
+        : { languages: { el: paths.article("el", slug), en: paths.article("en", slug) } },
     openGraph: { type: "article", images: [article.image] },
   };
 }

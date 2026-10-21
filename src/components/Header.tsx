@@ -22,7 +22,7 @@ export function navItems(lang: Locale, dict: Dictionary) {
 export function Header({ lang, dict }: { lang: Locale; dict: Dictionary }) {
   const items = navItems(lang, dict);
   const fallbackSwitch = (
-    <LanguageSwitchFallback lang={lang} label={dict.language.switchTo} />
+    <LanguageSwitchFallback lang={lang} label={dict.language.label} />
   );
 
   return (
@@ -37,7 +37,7 @@ export function Header({ lang, dict }: { lang: Locale; dict: Dictionary }) {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-full px-3.5 py-2 text-[15px] font-medium text-ink/80 transition hover:bg-brand-50 hover:text-brand-700"
+              className="whitespace-nowrap rounded-full px-3.5 py-2 text-[15px] font-medium text-ink/80 transition hover:bg-brand-50 hover:text-brand-700"
             >
               {item.label}
             </Link>
@@ -47,7 +47,7 @@ export function Header({ lang, dict }: { lang: Locale; dict: Dictionary }) {
         <div className="flex shrink-0 items-center gap-2">
           <div className="hidden sm:block">
             <Suspense fallback={fallbackSwitch}>
-              <LanguageSwitch lang={lang} label={dict.language.switchTo} />
+              <LanguageSwitch lang={lang} label={dict.language.label} />
             </Suspense>
           </div>
           <PhoneLink className="hidden items-center gap-2 rounded-full bg-accent-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600 md:inline-flex">
@@ -59,7 +59,7 @@ export function Header({ lang, dict }: { lang: Locale; dict: Dictionary }) {
             closeLabel={dict.menu.close}
             languageSwitch={
               <Suspense fallback={fallbackSwitch}>
-                <LanguageSwitch lang={lang} label={dict.language.switchTo} />
+                <LanguageSwitch lang={lang} label={dict.language.label} />
               </Suspense>
             }
             footer={

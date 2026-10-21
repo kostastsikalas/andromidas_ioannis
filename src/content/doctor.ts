@@ -10,6 +10,10 @@ export const doctor = {
       "Dr. Ioannis N. Andromidas is an Ear, Nose & Throat surgeon (Otolaryngologist) for adults and children, practising in Limenas Hersonissos, Heraklion.",
       "The doctor attends medical congresses every year and keeps up to date with medical progress.",
     ],
+    de: [
+      "Dr. Ioannis N. Andromidas ist Facharzt für Hals-Nasen-Ohrenheilkunde (HNO-Chirurg) für Erwachsene und Kinder mit eigener Praxis in Limenas Chersonissos bei Heraklion.",
+      "Der Arzt bildet sich kontinuierlich fort und nimmt regelmäßig an medizinischen Fortbildungen und Kongressen teil.",
+    ],
   } satisfies Localized<string[]>,
   education: {
     el: [
@@ -38,6 +42,13 @@ export const doctor = {
         text: "Aristotle University of Thessaloniki",
       },
     ],
+    de: [
+      { title: "Medizinische Fakultät der Universität Kreta", text: "Studium der Humanmedizin" },
+      { title: "Facharztausbildung Hals-Nasen-Ohrenheilkunde – Kopf- und Halschirurgie", text: "Kinderkrankenhaus „P&A Kyriakou“ und Allgemeines Staatliches Krankenhaus Nikea (Athen), mit einer großen Zahl erwachsener und kindlicher Patienten." },
+      { title: "Neurochirurgie (6 Monate)", text: "Allgemeines Staatliches Krankenhaus Nikea" },
+      { title: "Plastische Chirurgie (6 Monate)", text: "Krankenhaus „Agioi Anargyroi“" },
+      { title: "Master „Erkrankungen der Speicheldrüsen“ (2023)", text: "Aristoteles-Universität Thessaloniki" },
+    ],
   } satisfies Localized<{ title: string; text: string }[]>,
   memberships: {
     el: [
@@ -49,6 +60,11 @@ export const doctor = {
       "Medical Association of Heraklion",
       "Panhellenic Society of Otolaryngology – Head & Neck Surgery",
       "Hellenic Society of Head & Neck Oncology",
+    ],
+    de: [
+      "Ärztekammer Heraklion",
+      "Griechische Gesellschaft für Hals-Nasen-Ohrenheilkunde – Kopf- und Halschirurgie",
+      "Griechische Gesellschaft für Kopf-Hals-Onkologie",
     ],
   } satisfies Localized<string[]>,
 };

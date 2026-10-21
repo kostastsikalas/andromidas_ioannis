@@ -1,6 +1,6 @@
 # ioannisandromidas.gr — new site
 
-Next.js 16 (React 19, App Router, Cache Components) + Tailwind CSS 4. Greek (`/el`) and English (`/en`).
+Next.js 16 (React 19, App Router, Cache Components) + Tailwind CSS 4. Greek (`/el`), English (`/en`) and German (`/de`). Articles, announcements and the address are edited in Greek/English only; German pages show the English text, or the Greek when there is none.
 
 ## Run
 
