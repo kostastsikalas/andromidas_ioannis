@@ -71,9 +71,17 @@ export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <p className="mx-auto max-w-6xl px-4 py-5 text-sm text-brand-300 sm:px-6">
-          © {site.name[lang]}. {dict.footer.rights}
-        </p>
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-5 text-sm text-brand-300 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <p>
+            © {site.name[lang]}. {dict.footer.rights}
+          </p>
+          <p>
+            Powered by{" "}
+            <a href="https://ktdigital.dev/" target="_blank" rel="noopener" className="font-semibold text-brand-100 hover:text-white">
+              KTdigital
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );

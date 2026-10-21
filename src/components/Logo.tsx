@@ -28,11 +28,12 @@ export function Logo({ lang }: { lang: Locale }) {
     <span className="flex min-w-0 items-center gap-2.5 sm:gap-3">
       <LogoMark className="h-10 w-10 shrink-0" />
       <span className="min-w-0 leading-tight">
-        <span className="block font-display text-[15px] font-bold text-brand-900 sm:text-base">
+        <span className="block whitespace-nowrap font-display text-[15px] font-bold text-brand-900 sm:text-base">
           {site.name[lang]}
         </span>
-        <span className="block truncate text-[12px] text-muted sm:hidden">{site.shortTitle[lang]}</span>
-        <span className="hidden text-xs text-muted sm:block">{site.title[lang]}</span>
+        {/* Short title on phones and on mid-size screens where the menu sits next to the logo. */}
+        <span className="block truncate text-[12px] text-muted sm:hidden lg:block xl:hidden">{site.shortTitle[lang]}</span>
+        <span className="hidden text-xs text-muted sm:block lg:hidden xl:block">{site.title[lang]}</span>
       </span>
     </span>
   );

@@ -18,7 +18,7 @@ function Switch({ lang, label, href }: { lang: Locale; label: string; href: (to:
       aria-label={label}
       className="inline-flex items-center gap-0.5 rounded-full border border-line p-1 text-sm font-semibold text-ink/70"
     >
-      <GlobeIcon className="mx-1 h-4 w-4 text-ink/50" />
+      <GlobeIcon className="mx-1 hidden h-4 w-4 text-ink/50 xl:block" />
       {locales.map((l) =>
         l === lang ? (
           <span key={l} aria-current="true" className="rounded-full bg-brand-600 px-2.5 py-1 text-white">
